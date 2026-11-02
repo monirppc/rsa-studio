@@ -1,5 +1,6 @@
 # RSA Studio installer for Windows PowerShell 5.1+ (free, no admin needed except for Node.js install)
 $ErrorActionPreference = "Stop"
+try { Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force } catch {}
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
 # ---- GitHub zip link of the app (already set) ----
@@ -56,16 +57,16 @@ try {
 
   # 4) Browser helper (Playwright)
   Push-Location $InstallDir
-  if (-not (Test-Path "package.json")) { npm init -y | Out-Null }
+  if (-not (Test-Path "package.json")) { npm.cmd init -y | Out-Null }
   Say "Installing the browser helper (Playwright)..."
-  npm install playwright --no-fund --no-audit --loglevel=error
+  npm.cmd install playwright --no-fund --no-audit --loglevel=error
   if ($LASTEXITCODE -ne 0) { throw "npm install failed. Check your internet and run the command again." }
   $chrome = @("$env:ProgramFiles\Google\Chrome\Application\chrome.exe",
               "${env:ProgramFiles(x86)}\Google\Chrome\Application\chrome.exe",
               "$env:LOCALAPPDATA\Google\Chrome\Application\chrome.exe") | Where-Object { Test-Path $_ } | Select-Object -First 1
   if (-not $chrome) {
     Say "Google Chrome not found. Downloading a browser for the app (about 150 MB)..." "Yellow"
-    npx playwright install chromium
+    npx.cmd playwright install chromium
   }
   Pop-Location
 
