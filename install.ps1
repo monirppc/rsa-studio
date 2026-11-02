@@ -2,7 +2,7 @@
 $ErrorActionPreference = "Stop"
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
-# ---- EDIT THIS ONE LINE after you upload the project to GitHub ----
+# ---- GitHub zip link of the app (already set) ----
 $ZipUrl = "https://github.com/monirppc/rsa-studio/archive/refs/heads/main.zip"
 # --------------------------------------------------------------------
 
@@ -91,6 +91,9 @@ try {
   $lnk  = $ws.CreateShortcut((Join-Path $desk "RSA Studio.lnk"))
   $lnk.TargetPath = $cmd
   $lnk.WorkingDirectory = $InstallDir
+  $lnk.Description = "RSA Studio - Google Ads build sheets"
+  $ico = Join-Path $InstallDir "public\RSA-Studio.ico"
+  if (Test-Path $ico) { $lnk.IconLocation = "$ico,0" }
   $lnk.Save()
 
   Remove-Item -Recurse -Force $tmp -ErrorAction SilentlyContinue
