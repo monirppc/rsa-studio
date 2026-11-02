@@ -1,0 +1,1450 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Abu RSA Studio</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@600;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: input panel left; right side reads like the printed build sheet (cover → 01 settings → 02/03 negatives → campaign pages → ad group pages → notes). */
+:root{
+  --bg:#EEF0EC; --surface:#FFFFFF; --sunk:#F4F4F2; --label:#F2F3F0; --ink:#1E2420; --muted:#5F6863; --line:#D9DCD6;
+  --cover:#222A26; --cover-ink:#EEF1EE; --eyebrow:#9A5B1C; --eyebrow-dark:#E0A15E; --adhead:#2E5E4E; --adhead-ink:#FFFFFF;
+  --note:#F5ECDD; --hi:#E7B33A; --ok:#1E8048; --warn:#A86A10; --bad:#C2410C; --bad-bg:#FCE9E1; --warn-bg:#FBF1DC;
+  --f-display:"Inter Tight","Segoe UI",system-ui,sans-serif;
+  --f-body:"Inter","Segoe UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+  --r:8px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#111513; --surface:#181E1B; --sunk:#1F2622; --label:#222A26; --ink:#E4EAE6; --muted:#97A39C; --line:#2E3833;
+  --cover:#0C110F; --cover-ink:#E9EEEA; --eyebrow:#E0A15E; --eyebrow-dark:#E0A15E; --adhead:#3B7A64; --adhead-ink:#FFFFFF;
+  --note:#2E2618; --hi:#E7B33A; --ok:#4CC27E; --warn:#E3A93F; --bad:#F27B4C; --bad-bg:#3A1D13; --warn-bg:#33270F; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111513; --surface:#181E1B; --sunk:#1F2622; --label:#222A26; --ink:#E4EAE6; --muted:#97A39C; --line:#2E3833;
+  --cover:#0C110F; --cover-ink:#E9EEEA; --eyebrow:#E0A15E; --eyebrow-dark:#E0A15E; --adhead:#3B7A64; --adhead-ink:#FFFFFF;
+  --note:#2E2618; --hi:#E7B33A; --ok:#4CC27E; --warn:#E3A93F; --bad:#F27B4C; --bad-bg:#3A1D13; --warn-bg:#33270F; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:14px;line-height:1.5}
+.wrap{max-width:1500px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:18px 48px}
+header.top{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;padding-bottom:16px;border-bottom:1px solid var(--line);margin-bottom:20px}
+.brand{display:flex;align-items:baseline;gap:10px;margin-right:auto}
+.brand h1{font-family:var(--f-display);font-weight:800;font-size:24px;letter-spacing:-.02em;margin:0}
+.brand span{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.projbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.grid{display:grid;gap:20px}
+@media (min-width:1060px){.grid{grid-template-columns:380px minmax(0,1fr);align-items:start}.panel{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow:auto}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;display:flex;flex-direction:column;gap:16px}
+fieldset{border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;min-width:0}
+legend{font-family:var(--f-mono);font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--eyebrow);font-weight:600;margin-bottom:6px;padding:0}
+label{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:500;min-width:0}
+label small{font-weight:400;color:var(--muted)}
+input[type=text],input[type=number],input[type=date],textarea,select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px 10px;width:100%;min-width:0}
+textarea{resize:vertical;min-height:60px}
+input:focus-visible,textarea:focus-visible,select:focus-visible,button:focus-visible,[contenteditable]:focus-visible,summary:focus-visible{outline:2px solid var(--eyebrow);outline-offset:1px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.checks{display:flex;flex-wrap:wrap;gap:6px 14px}
+.checks label{flex-direction:row;align-items:center;gap:6px;font-weight:400}
+.seg{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.seg label{flex:1;flex-direction:row;justify-content:center;gap:6px;padding:7px 8px;cursor:pointer}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label:has(input:checked){background:var(--cover);color:var(--cover-ink)}
+.seg label:has(input:focus-visible){outline:2px solid var(--eyebrow);outline-offset:-2px}
+button{font:inherit;font-weight:600;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:8px 14px;cursor:pointer}
+button:hover{border-color:var(--eyebrow)}
+button:disabled{opacity:.5;cursor:not-allowed}
+button.primary{background:var(--cover);color:var(--cover-ink);border-color:var(--cover);padding:11px 16px;font-size:15px}
+button.small{padding:3px 9px;font-size:12px}
+.actions{display:flex;gap:8px;flex-wrap:wrap} .actions .primary{flex:1}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;font-size:13px}
+.steps li{display:flex;gap:8px;align-items:center;color:var(--muted)}
+.steps li::before{content:"";width:9px;height:9px;border-radius:50%;border:2px solid var(--line);flex:none}
+.steps li.run{color:var(--ink)} .steps li.run::before{border-color:var(--hi);background:var(--hi);animation:pulse 1s infinite alternate}
+.steps li.done{color:var(--ink)} .steps li.done::before{border-color:var(--ok);background:var(--ok)}
+.steps li.err{color:var(--bad)} .steps li.err::before{border-color:var(--bad);background:var(--bad)}
+@keyframes pulse{to{opacity:.35}}
+@media (prefers-reduced-motion:reduce){.steps li.run::before{animation:none}}
+.msg{font-size:13px;border-radius:6px;padding:10px 12px;background:var(--warn-bg);border:1px solid var(--line)}
+.msg.bad{background:var(--bad-bg)}
+/* Sheet */
+.out{display:flex;flex-direction:column;gap:18px;min-width:0}
+.cover{background:var(--cover);color:var(--cover-ink);border-radius:var(--r);padding:34px 30px 22px;display:flex;flex-direction:column;gap:14px}
+.eyebrow{font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--eyebrow);font-weight:600}
+.cover .eyebrow{color:var(--eyebrow-dark)}
+.cover h2{font-family:var(--f-display);font-weight:800;font-size:clamp(28px,4.4vw,46px);line-height:1.04;letter-spacing:-.03em;margin:0;text-wrap:balance}
+.cover p.sub{margin:0;opacity:.85;max-width:62ch;font-size:15px}
+.stats{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;border-top:1px solid color-mix(in srgb,var(--cover-ink) 25%,transparent);border-bottom:1px solid color-mix(in srgb,var(--cover-ink) 25%,transparent);padding:10px 0;gap:10px}
+.stats div{min-width:0} .stats b{display:block;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.1em;opacity:.7;font-weight:600}
+.stats span{font-family:var(--f-display);font-weight:600;font-size:20px;font-variant-numeric:tabular-nums}
+@media (max-width:520px){.stats{grid-template-columns:1fr 1fr}}
+.cover .dl{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.cover button{background:transparent;color:var(--cover-ink);border-color:color-mix(in srgb,var(--cover-ink) 35%,transparent)}
+.cover .fine{font-size:12px;opacity:.75;margin:0}
+code,.kw{font-family:var(--f-mono)}
+.cover code{background:color-mix(in srgb,var(--cover-ink) 14%,transparent);padding:1px 5px;border-radius:3px;font-size:11.5px}
+.tag{display:inline-block;font-family:var(--f-mono);font-size:11px;padding:2px 7px;border-radius:999px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.cover .tag{color:var(--cover-ink);border-color:var(--hi)}
+.tag.ok{border-color:var(--ok);color:var(--ok)} .tag.warn{border-color:var(--warn);color:var(--warn)} .tag.bad{border-color:var(--bad);color:var(--bad)}
+section.page{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:22px 20px;display:flex;flex-direction:column;gap:10px;min-width:0}
+section.page h3{font-family:var(--f-display);font-weight:800;font-size:24px;letter-spacing:-.02em;margin:0;text-wrap:balance}
+section.page h3.mono{font-family:var(--f-mono);font-weight:600;font-size:20px;letter-spacing:-.01em}
+section.page h4{font-family:var(--f-display);font-weight:600;font-size:16px;margin:10px 0 2px}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+table.kv td,table.kv th{border:1px solid var(--line);padding:7px 10px;vertical-align:top;text-align:left}
+table.kv th{background:var(--label);font-weight:600;width:170px}
+table.data th{background:var(--label);font-family:var(--f-mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;text-align:left;padding:7px 8px;border:1px solid var(--line);white-space:nowrap}
+table.data td{border:1px solid var(--line);padding:6px 8px;vertical-align:top}
+td.ch{font-family:var(--f-mono);font-size:12px;color:var(--muted);text-align:right;width:40px;font-variant-numeric:tabular-nums}
+td.ch.over{color:var(--bad);font-weight:600}
+td.n{font-family:var(--f-mono);font-size:12px;color:var(--muted);text-align:right;width:30px}
+td.pin{font-family:var(--f-mono);font-size:12px;color:var(--eyebrow);font-weight:600;width:42px;text-align:center}
+td.url{font-family:var(--f-mono);font-size:12px;overflow-wrap:anywhere}
+td[contenteditable]{cursor:text}
+td[contenteditable]:hover{background:var(--sunk)}
+tr.flag td{background:var(--bad-bg)}
+.cat{display:block;font-size:10.5px;color:var(--muted);font-family:var(--f-mono)}
+.callout{background:var(--note);border-radius:6px;padding:12px 14px;font-size:13.5px}
+.boxes{display:grid;gap:14px 18px;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr))}
+.nbox{min-width:0}
+.nbox .bh{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.nbox .bh b{font-family:var(--f-mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-right:auto}
+.kbox{background:var(--sunk);border:1px solid var(--line);border-radius:6px;padding:10px 12px;font-family:var(--f-mono);font-size:12.5px;columns:3 9ch;column-gap:18px;overflow-wrap:anywhere}
+.kbox.two{columns:2 22ch}
+.kbox div{break-inside:avoid}
+.row-url{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;border:1px solid var(--line);font-size:13px}
+.row-url>*{padding:7px 10px;border-right:1px solid var(--line);min-width:0;overflow-wrap:anywhere}
+.row-url>*:last-child{border-right:0}
+.row-url b{background:var(--label);font-weight:600}
+@media (max-width:640px){.row-url{grid-template-columns:auto minmax(0,1fr)}.row-url>*:nth-child(2){border-right:0}.row-url>*:nth-child(-n+2){border-bottom:1px solid var(--line)}}
+.chipline{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12.5px;color:var(--muted)}
+.chipline code{background:var(--sunk);border:1px solid var(--line);padding:1px 6px;border-radius:3px;color:var(--ink);font-size:12px}
+.ads{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(min(100%,430px),1fr))}
+.ad{min-width:0;display:flex;flex-direction:column}
+.adbar{background:var(--adhead);color:var(--adhead-ink);font-family:var(--f-mono);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:8px 10px;display:flex;align-items:center;gap:8px;border-radius:4px 4px 0 0}
+.adbar span{margin-right:auto}
+.adbar button{background:transparent;color:var(--adhead-ink);border-color:color-mix(in srgb,var(--adhead-ink) 45%,transparent)}
+.ad .hyp{font-size:12px;color:var(--muted);padding:6px 2px 4px}
+.issues{font-size:12.5px;padding:6px 2px;display:flex;flex-direction:column;gap:2px}
+.issues .e{color:var(--bad)} .issues .w{color:var(--warn)} .issues .okline{color:var(--ok)}
+.crumb{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--eyebrow);font-weight:600}
+.cols3{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.cols3 b{display:block;font-family:var(--f-mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+ul.plain{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:3px}
+.footline{font-size:12.5px;color:var(--muted);text-align:center;padding:6px}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><h1>RSA Studio</h1><span>Google Ads build sheets</span></div>
+    <div class="projbar">
+      <select id="projSel" aria-label="Saved projects"><option value="">Saved projects…</option></select>
+      <button class="small" id="newProj" type="button">New project</button>
+      <button class="small" id="saveBtn" type="button" disabled>Save edits</button>
+    </div>
+  </header>
+
+  <div class="grid">
+    <form class="panel" id="f" autocomplete="off">
+      <fieldset>
+        <legend>Mode</legend>
+        <div class="seg" role="radiogroup" aria-label="Mode">
+          <label><input type="radio" name="mode" id="modeNew" value="new" checked>New build</label>
+          <label><input type="radio" name="mode" id="modeUpd" value="update">Update existing</label>
+        </div>
+        <p class="note" id="modeNote">Builds the full account sheet: settings, negative lists, campaigns, ad groups, keywords, RSAs and assets.</p>
+      </fieldset>
+
+      <fieldset>
+        <legend>Business</legend>
+        <label>Landing page links <small>One per line. The first is the main page.</small>
+          <textarea id="url" rows="2" placeholder="https://www.example.com/&#10;https://www.example.com/estimate"></textarea>
+        </label>
+        <label>Website content <small>Optional. Empty = the tool opens the links itself (Claude desktop app).</small>
+          <textarea id="site" rows="3" placeholder="Optional: page text, offers, reviews, brands carried…"></textarea>
+        </label>
+        <div class="row2">
+          <label>Business name <small>Optional</small><input type="text" id="biz" placeholder="Auto from site"></label>
+          <label>Language <input type="text" id="lang" value="English"></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Budget &amp; targeting</legend>
+        <div class="row2">
+          <label>Monthly ad spend ($) <input type="number" id="budget" min="0" step="10" placeholder="e.g. 3880"></label>
+          <label>Launch date <input type="date" id="launch"></label>
+        </div>
+        <label>Target locations <small>Optional. Empty = taken from your instructions, client messages or the website.</small><input type="text" id="locIn" placeholder="e.g. 30 mi radius around Marietta, GA"></label>
+        <label>Exclude locations <small>Optional</small><input type="text" id="locEx" placeholder="e.g. Pelham, Alabaster"></label>
+        <div class="row2">
+          <label>Phone <small>Optional</small><input type="text" id="phone" placeholder="(770) 430-4727"></label>
+          <label>Business hours <small>Optional</small><input type="text" id="hours" placeholder="Mon-Fri 9-5, Sat 10-3"></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Keywords · optional</legend>
+        <label><small>One per line. Empty = built from the website. Given = checked, cleaned and match types set.</small>
+          <textarea id="keywords" rows="3" placeholder="flooring store atlanta&#10;lvp installation"></textarea>
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Instructions &amp; client messages</legend>
+        <label><small>Your orders, hints, or the client's messages. In Update mode, write what should change.</small>
+          <textarea id="notes" rows="4" placeholder="e.g. Separate co-op campaigns for Mohawk and Shaw. Light commercial runs weekdays only. Repair is not offered."></textarea>
+        </label>
+        <div id="updBox" hidden>
+          <label>Previous build <small>Uses the loaded saved project, or upload the old PDF / paste the old sheet.</small>
+            <input type="file" id="oldPdf" accept="application/pdf,.pdf,.txt,.csv">
+          </label>
+          <textarea id="oldText" rows="4" placeholder="Old build text (filled from the PDF)…" aria-label="Old build text"></textarea>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Structure</legend>
+        <div class="row2">
+          <label>Campaigns <select id="camps"><option value="auto">Auto</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></label>
+          <label>Ad groups (total) <select id="groups"><option value="auto">Auto</option><option>2</option><option>3</option><option>4</option><option>6</option><option>8</option><option>10</option><option>12</option><option>16</option><option>20</option></select></label>
+        </div>
+        <label>RSAs per ad group <select id="rsas"><option value="auto">Auto (2)</option><option>1</option><option>2</option><option>3</option></select></label>
+        <div class="checks">
+          <label><input type="checkbox" id="extSl" checked>Sitelinks</label>
+          <label><input type="checkbox" id="extCo" checked>Callouts</label>
+          <label><input type="checkbox" id="extSn" checked>Structured snippets</label>
+          <label><input type="checkbox" id="brandCamp">Brand campaign</label>
+        </div>
+      </fieldset>
+
+      <div class="actions">
+        <button class="primary" id="go" type="submit">Build account</button>
+        <button id="stop" type="button" hidden>Stop</button>
+        <button id="skipSite" type="button" hidden>Build without website</button>
+      </div>
+      <ol class="steps" id="steps" hidden></ol>
+      <div id="formMsg" hidden></div>
+      <p class="note">Every headline, description, path and asset is counted by the tool. Anything over a limit is sent back for one automatic rewrite. Budgets and CPC caps are starting suggestions.</p>
+    </form>
+
+    <div class="out" id="out"></div>
+  </div>
+</div>
+
+<script src="local-shim.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+"use strict";
+const $ = s => document.querySelector(s);
+const el = (tag, attrs = {}, ...kids) => {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (v == null || v === false) continue;
+    if (k === "class") e.className = v; else if (k === "text") e.textContent = v;
+    else if (k.startsWith("on")) e.addEventListener(k.slice(2), v); else e.setAttribute(k, v === true ? "" : v);
+  }
+  for (const k of kids.flat()) if (k != null && k !== false) e.append(k.nodeType ? k : String(k));
+  return e;
+};
+const arr = v => Array.isArray(v) ? v : [];
+const str = v => v == null ? "" : String(v);
+const num = v => { const n = parseFloat(String(v ?? "").replace(/[^0-9.]/g, "")); return isFinite(n) ? n : 0; };
+const money = n => "$" + Math.round(num(n)).toLocaleString();
+
+/* ---------- Rules ---------- */
+const LIM = { h: 30, d: 90, path: 15, callout: 25, slText: 25, slDesc: 35, snip: 25 };
+const SNIPPET_HEADERS = ["Amenities","Brands","Courses","Degree programs","Destinations","Featured hotels","Insurance coverage","Models","Neighborhoods","Service catalog","Shows","Styles","Types"];
+const TODAY = new Date().toISOString().slice(0, 10);
+
+/* Account-building rules, for local service businesses. */
+const STRATEGY = `ROLE
+You are a senior Google Ads Search strategist building a complete, copy-and-paste build sheet for a local service business. Today is ${TODAY}.
+
+TRUTH RULES (never break)
+- Use only facts from the website content, keyword list, or the user's instructions / client messages. Never invent ratings, review counts, awards, prices, discounts, guarantees, certifications, years in business, response times, hours, phone numbers, addresses or brands carried.
+- A missing fact is a gap. Anything you rely on that the client must still confirm goes into "confirm_before_launch" (e.g. years in business, rating, financing, showroom hours).
+
+ACCOUNT SETTINGS (set once for the whole account, unless the user says otherwise)
+- Campaign type: Search only. Turn off Search Partners and the Display Network.
+- Location: the user's target area (radius around the address or named areas); Location option: Presence.
+- Language from input. Conversion goals: primary = landing page form submits, estimate / contact forms, calls of 60 seconds or more; secondary = click-to-call, directions.
+- Auto-tagging On. Final URL suffix: utm_source=google&utm_medium=cpc&utm_campaign={campaignid}&utm_term={keyword}&utm_content={creative}
+- Automatically created assets: Off. AI Max off. Broad match off. Ad rotation: Optimize.
+- List the landing pages (Page 1, Page 2...) when there is more than one.
+
+CAMPAIGNS
+- Naming: "<short business code> | Search | <Theme> | <Market short>" (e.g. "SF | Search | Residential | Metro ATL").
+- Split by intent and budget: main residential / core services; light commercial when the site serves businesses; separate co-op campaigns per manufacturer brand programme the site shows (each points only to its own brand landing page); Brand campaign only if asked.
+- Budget: split the monthly spend by priority (core gets most). Give "$X / month · $Y / day" (day = month / 30.4; weekday-only campaigns use month / 21.7 and say "/ weekday"). Total must equal the monthly spend given. If no spend was given, set 0 and add it to confirm_before_launch.
+- Per campaign: bidding (new account: Maximize Clicks with a max CPC cap for weeks 1-2 or 1-3, then Maximize Conversions after ~15 conversions in 30 days; give the cap as an estimate), ad schedule (all days, all hours; call asset only during business hours; commercial = weekday business hours), location, landing page (and any A/B test plan), list of ad groups, negatives line ("All N shared lists + campaign list (section 03)").
+
+AD GROUPS
+- One tight theme each (service / product / brand / intent), 4-15 keywords, final URL = the most specific landing page, one display path per ad group (two parts, max 15 chars each, no spaces).
+- Put cost / price / quote searches into an "Estimates & Quotes" ad group and send them there with ad group negatives (cost, costs, price, prices, pricing) on the other ad groups. Give a one-line reason for each set of ad group negatives.
+
+KEYWORDS & MATCH TYPES
+- Syntax: "phrase match", [exact match]. Phrase is the default for service + location, near me, service + action and problem + service terms. Exact for short ambiguous terms, free / estimate terms and brand or model names.
+- Clean-up: one match type per keyword text; no plurals or close variants; drop longer keywords covered by a shorter phrase keyword in the same campaign; drop informational and DIY terms; drop products the site doesn't confirm; each keyword in exactly one ad group. Report each rule applied with examples.
+
+NEGATIVE KEYWORDS (syntax: plain = broad match, "phrase", [exact])
+- About 8-12 SHARED lists applied to every campaign, each named "NEG — <TOPIC>" in capitals, e.g. NEG — JOBS & TRAINING, NEG — DIY & HOW-TO, NEG — FREE, USED & SCRAP, NEG — WHOLESALE & MANUFACTURING, NEG — SERVICES NOT OFFERED, NEG — REPAIR (DEFAULT) when repair isn't clearly offered, NEG — LABOR-ONLY & BIG BOX, NEG — RESEARCH & INFO, NEG — OUT OF AREA (cities outside the target), NEG — OWN BRAND (when there is no Brand campaign). 5-20 terms each.
+- CAMPAIGN-LEVEL lists keep every search in one campaign only: residential blocks commercial terms and co-op brand names; commercial blocks residential terms and brand names; each co-op campaign blocks the other programmes' brands and unrelated meanings of its own brand (people, companies, places with the same name).
+- Never add a negative that blocks one of the account's own keywords.
+
+ASSETS (per campaign)
+- Sitelinks: 4-6, text max 25, two lines max 35, URL on the same domain as the landing page; when the page doesn't exist yet write "Page 1/path" style and say the page builder must add it.
+- Callouts: 6-10, max 25, only supported claims (or ones listed in confirm_before_launch).
+- Structured snippets: 2-3 headers chosen ONLY from: ${SNIPPET_HEADERS.join(", ")}; 3-10 values, each max 25.
+- Call asset: phone · Google forwarding number on · count calls of 60 seconds or more · schedule = business hours. Location asset: link the Google Business Profile once its number matches.
+
+CURRENT GOOGLE ADS RULES (verified Nov 2026)
+- Call-only ads can't be created since Feb 2026 and stop serving Feb 2027; never generate them (use RSA + call asset).
+- Since Sept 2026, Search campaigns with automatically created assets (text customization) or campaign-level broad match were auto-upgraded to AI Max; Google may then serve its own lines. Keep them off.
+- New Dynamic Search Ad campaigns can't be created; existing DSA auto-upgrade to AI Max in Feb 2027.
+
+PRIORITY: the user's instructions and client messages override these defaults, except the truth rules and Google's character limits.`;
+
+/* Ad copy rules: ONLY the user's "New RSA Prompt" (master skill), word for word, plus a short adapter for the tool. */
+const ADCOPY = `New RSA Prompt
+================
+Google Ads RSA Copywriter — Master Skill / System Prompt
+Identity
+You are an expert Google Ads Responsive Search Ad (RSA) copywriter. You combine direct-response customer psychology with Google's current RSA asset rules. You never open with headlines — you always understand the customer and the business first.
+
+STEP 0 — Always ask for this before writing anything
+When the user says something like "I need search and copy," do not start writing. Ask for (in one message, as a short checklist):
+Landing page URL or full landing page text/content
+Finalized keyword list (CSV or pasted list, grouped by ad group if possible)
+Brand/business name + website
+Geographic market + language
+Optional but helpful: current best-performing ads, offer/promo, proof points (ratings, reviews, credentials, guarantees), brand voice (direct / premium / friendly / technical / authoritative / minimalist), and anything competitors shouldn't be compared to or claims that are off-limits.
+If the user only gives landing page + keywords, proceed — derive brand voice from the page's own tone and say you did so. Never invent proof points, numbers, ratings, guarantees, or claims that aren't on the page or in what the user supplied. A missing fact is a labeled gap, not a filled-in guess.
+
+STEP 1 — Understand the customer before writing a single headline
+Answer these 5 questions from the keyword list + landing page before drafting copy:
+Question
+What it reveals
+What did they search?
+Keyword + immediate intent
+What problem are they trying to solve?
+The pain behind the search
+What do they want to happen?
+The desired outcome
+What are they worried about?
+The fear/objection/risk
+Why should they choose this business?
+The real USP or proof
+
+Buyer intent (match message to search stage)
+Intent
+Example search
+Best message
+Urgent problem
+emergency plumber Houston
+Speed + availability + action
+Service ready
+plumber Houston
+Service + location + trust
+Specific problem
+water heater repair Houston
+Problem + solution + expertise
+Commercial research
+best plumber Houston
+Proof + USP + differentiation
+Price research
+plumber cost Houston
+Transparent pricing + explanation
+Informational
+how to unclog a drain
+Usually not a lead-gen target
+
+4 levels of customer awareness
+Awareness
+Situation
+Best copy
+Problem aware
+Knows the problem, not the solution
+Problem + simple solution
+Solution aware
+Knows the type of service needed
+Service + benefit + proof
+Provider aware
+Comparing businesses
+USP + proof + offer
+Ready to buy
+Wants to book now
+Availability + friction removal + CTA
+
+The closer to buying, the less you educate and the more you remove friction.
+Core buying triggers
+Urgency, Safety, Trust, Price certainty, Convenience, Control, Social proof, Local trust, Outcome, Risk reduction. Map the strongest 2–3 triggers per ad group to the landing page's actual offer — don't use all of them everywhere.
+
+STEP 2 — Find the real USP (never invent one)
+Formula: We help [CUSTOMER] get [OUTCOME] through [DIFFERENTIATOR] without [COMMON PAIN].
+ USP test — reject generic claims:
+"Quality service" / "We care about our customers" → weak, everyone says it
+"Licensed and insured" → useful proof, not unique
+"Same-day emergency response" / "Upfront pricing before work" → strong, if true
+Only use a USP the landing page or user actually supports. A good ad cannot rescue a business with no truthful reason to be chosen.
+
+STEP 3 — Psychology frameworks to build copy from
+Pick the framework that fits the ad group's intent — don't force all of them in:
+PAS: Problem → Agitate → Solution
+BAB: Before → After → Bridge
+FAB: Feature → Advantage → Benefit
+4P: Promise → Picture → Proof → Push
+PSA: Problem → Solution → Action
+Use a short, real customer moment where possible (from reviews, sales calls, chats, search terms) — never a fabricated testimonial.
+
+STEP 4 — Headline generation (15 headlines, ≤30 characters each, hard limit)
+Build from 6 categories. Aim for a balanced spread (don't write 15 versions of the same idea):
+Category
+Job
+Example
+1. Dynamic Keyword Insertion (DKI)
+Real-time relevance
+{KeyWord:Emergency Plumber}
+2. Trust & Proof
+Reduce risk
+Licensed & Insured Experts
+3. Offer / Number / Price
+Give a reason to act now
+Free Quote in 10 Minutes
+4. Benefit / Feature
+Show the result
+Same-Day Appointments
+5. Emotional Trigger
+Connect with the moment
+Don't Wait for It to Worsen
+6. Call To Action
+Tell them what to do
+Call Now for Fast Service
+
+Rough mix guide: 2–3 DKI, 7–8 keyword/benefit/proof headlines, 5–6 selling headlines, 2–3 pure CTA headlines. Every headline must earn its slot — no near-duplicates (don't repeat the same claim with 1–2 words changed).
+DKI rules
+Format: {KeyWord:Default Text} — the default text after the colon is NOT optional. It must read as a complete, natural headline on its own, because Google shows it whenever the matched keyword is too long or no match is found.
+Only use inside tightly-themed ad groups — loose ad groups make DKI insert awkward/irrelevant keywords.
+Capitalization in the tag controls display: {KeyWord:...} = Title Case, {KEYWord:...} = ALL CAPS first word.
+Use 2–3 DKI headlines max per ad group, paired with strong static headlines so the ad still looks complete if DKI falls back to default text.
+DKI inserts the matched keyword, not necessarily the user's literal search term.
+5-part headline test (apply to every headline before finalizing)
+Relevant to the search?
+Addresses something the customer cares about?
+Gives a reason to choose this business?
+Is the promise believable/provable?
+Makes the next step obvious?
+
+STEP 5 — Description generation (4 descriptions, ≤90 characters each, hard limit)
+Main formula: Problem → Solution → Proof → Benefit → Action
+ Use a mix of these description types:
+Problem + Solution
+Benefit + Feature
+Trust + CTA
+(or PAS / BAB / FAB / 4P / PSA structured as full sentences)
+Each description should feel like something a real person would say, match the keyword theme, speak to the customer's main concern, carry a real (provable) USP, and end with a clear next action. The landing page must continue the same promise (message match — see Step 7).
+
+STEP 6 — Callout extensions (optional add-on, ≤25 characters each)
+Non-clickable trust/value stackers below the ad. Cover a mix of:
+Guarantees ("Satisfaction Guaranteed")
+Availability ("Open 24/7", "Same-Day Service")
+Credentials ("Licensed & Insured", "BBB Accredited")
+Pricing signals ("Free Estimates", "No Hidden Fees")
+Convenience ("Easy Online Booking", "Financing Available")
+Experience ("10+ Years Experience", "Family Owned & Operated")
+Only include claims actually supported by the landing page.
+
+STEP 7 — Message match (keyword → ad → landing page = one conversation)
+Search
+Ad
+Landing page
+emergency plumber Houston
+Emergency Plumber Houston
+Emergency Plumbing Service in Houston
+
+If the ad promises something the landing page doesn't immediately confirm, the customer has to work to feel they're in the right place — fix the mismatch before shipping.
+
+STEP 8 — Mandatory verification pass (run this every time, before showing output)
+Re-count every headline and description character by character, including spaces and punctuation. Headlines ≤30, descriptions ≤90, display paths ≤15. Any overflow → rewrite and recount. Never truncate to fit.
+Non-English markets often run 20–30% longer (e.g., German, Polish) — draft against a tighter ~25-character headline budget in those languages.
+Check no headline duplicates another's first ~20 characters (near-duplicates waste asset slots).
+Confirm the first 3 headlines can sensibly appear together, and that any headline can pair with any description without over-claiming.
+Missing-input handling:
+No brand voice supplied → derive tone from landing page copy, and say so.
+No proof points supplied → ask; never invent numbers, reviews, or awards.
+No keyword list supplied → generate from the landing page's own vocabulary, and say so.
+2026 policy notes: Call-only ads were deprecated (Feb 2026) — never generate them. Campaigns using auto-created assets, DSA, or campaign-level broad match auto-upgrade toward AI Max from Sept 2026 — with auto-created assets on, Google may serve its own variants alongside this set; flag this to the user if relevant.
+
+Output format (always use this structure)
+1. Claim ledger — supported facts you'll use, claims you're avoiding, and any missing proof (name the gap, don't fill it).
+ 2. Headlines table — columns: # | Headline | Character Count | Category | Notes. 15 rows.
+ 3. Descriptions table — columns: # | Description | Character Count | Category | Notes. 4 rows.
+ 4. Callouts table (if requested/useful) — columns: Callout | Category | Character Count.
+ 5. Pinning plan — default: nothing pinned. Only recommend pinning a specific headline/description position if there's a real compliance, legal, or brand requirement to always show it — note the tradeoff (pinning reduces Google's combination flexibility).
+ 6. Testing notes — the hypothesis this set is testing (e.g., "speed vs. trust," "price transparency vs. offer framing"), and what to compare it against.
+ 7. Data gaps — anything you had to ask for or flag instead of inventing.
+ End every output with: "No ads were created or changed — this is copy for your review before publishing."
+
+Hard guardrails (never break these)
+Never exceed 30 chars/headline, 90 chars/description, 25 chars/callout, 15 chars/display path.
+Never invent ratings, review counts, awards, pricing, guarantees, certifications, or timing claims not supplied by the user or landing page.
+Never use a competitor's brand name unless the user explicitly approves it.
+Never write near-duplicate headlines that just reword the same claim.
+Never recommend heavy pinning without a real compliance/brand reason.
+Never generate call-only ad formats (deprecated Feb 2026).
+
+Quick-fire follow-up prompts (use these to iterate once a set exists)
+"What can be improved about these headlines?"
+"Apply those improvements and give me 10 more that reflect them."
+"Prioritize uncommon angles I haven't used yet."
+"Give me 10 iterations of [best-performing headline], all ≤30 characters."
+"Give me 5 more descriptions without the main keyword — generic USP, no CTA."
+
+HOW THIS TOOL APPLIES THE SKILL (adapter, not extra copy rules)
+- STEP 0 inputs are already collected by the tool's form; never stop to ask. Missing items become labeled gaps.
+- Write two RSAs per ad group by default, each testing a different hypothesis (e.g. Ad A "Trust & Local" vs Ad B "Convenience & Offer").
+- Put Category and Notes on every headline and description line; put the claim ledger, pinning plan, testing notes and data gaps where the JSON asks for them.
+- Reply in the JSON shape the task asks for, not in tables.`;
+
+/* ---------- Text helpers ---------- */
+const DKI_RE = /\{\s*key\s*word\s*:([^}]*)\}/gi;
+const shown = t => str(t).replace(DKI_RE, (_, d) => d);
+const clen = t => [...shown(t)].length;
+const hasDKI = t => /\{\s*key\s*word/i.test(str(t));
+const badDKI = t => /\{\s*key\s*word\s*\}/i.test(t) || /\{\s*key\s*word\s*:\s*\}/i.test(t);
+const norm = t => shown(t).toLowerCase().replace(/[^a-z0-9 ]/g, "").replace(/\s+/g, " ").trim();
+const MATCH = m => /exact/i.test(m) ? "Exact" : /broad/i.test(m) ? "Broad" : "Phrase";
+function normKw(k, def = "Phrase") {
+  if (k && typeof k === "object") { const p = normKw(str(k.text || k.keyword), k.match ? MATCH(k.match) : def); return k.match ? { text: p.text, match: MATCH(k.match) } : p; }
+  let s = str(k).trim(), m = def;
+  if (/^\[.*\]$/.test(s)) { m = "Exact"; s = s.slice(1, -1); } else if (/^".*"$/.test(s)) { m = "Phrase"; s = s.slice(1, -1); } else if (/^-/.test(s)) s = s.slice(1);
+  return { text: s.trim().toLowerCase(), match: m };
+}
+const kwSyntax = k => k.match === "Exact" ? `[${k.text}]` : k.match === "Broad" ? k.text : `"${k.text}"`;
+const words = s => ` ${norm(s)} `;
+function negBlocks(n, kw) {
+  if (!norm(n.text)) return false;
+  if (n.match === "Exact") return norm(n.text) === norm(kw.text);
+  if (n.match === "Phrase") return words(kw.text).includes(words(n.text));
+  return norm(n.text).split(" ").every(w => words(kw.text).includes(` ${w} `));
+}
+
+/* ---------- Validation ---------- */
+function validateAd(ad) {
+  const E = [], W = [], rowH = [], rowD = [];
+  const H = ad.headlines, D = ad.descriptions;
+  if (H.length !== 15) E.push(`Needs 15 headlines (has ${H.length})`);
+  if (D.length !== 4) E.push(`Needs 4 descriptions (has ${D.length})`);
+  const seen = new Map(); let dki = 0;
+  H.forEach((h, i) => {
+    const t = h.text, L = clen(t), e = [];
+    if (L > LIM.h) e.push(`H${i + 1} is ${L}/30`);
+    if (!t.trim()) e.push(`H${i + 1} is empty`);
+    if (badDKI(t)) e.push(`H${i + 1} DKI has no default text`);
+    if (hasDKI(t)) dki++;
+    const key = norm(t).slice(0, 20);
+    if (key && seen.has(key)) e.push(`H${i + 1} repeats the start of H${seen.get(key) + 1}`); else if (key) seen.set(key, i);
+    rowH.push({ L, e }); E.push(...e);
+  });
+  if (dki > 3) W.push(`${dki} DKI headlines (max 3)`);
+  D.forEach((d, i) => { const L = clen(d.text), e = []; if (L > LIM.d) e.push(`D${i + 1} is ${L}/90`); if (!d.text.trim()) e.push(`D${i + 1} is empty`); rowD.push({ L, e }); E.push(...e); });
+  return { E, W, rowH, rowD };
+}
+function validatePath(g) {
+  const E = [];
+  arr(g.display_path).forEach((p, i) => { if ([...p].length > LIM.path) E.push(`Display path ${i + 1} is ${[...p].length}/15`); if (/\s/.test(p)) E.push(`Display path ${i + 1} has spaces`); });
+  return E;
+}
+function validateAssets(c) {
+  const E = [], W = [], tag = c.name;
+  c.sitelinks.forEach((s, i) => {
+    if (clen(s.text) > LIM.slText) E.push(`${tag}: sitelink ${i + 1} text is ${clen(s.text)}/25`);
+    if (clen(s.d1) > LIM.slDesc) E.push(`${tag}: sitelink ${i + 1} line 1 is ${clen(s.d1)}/35`);
+    if (clen(s.d2) > LIM.slDesc) E.push(`${tag}: sitelink ${i + 1} line 2 is ${clen(s.d2)}/35`);
+  });
+  c.callouts.forEach((t, i) => { if (clen(t) > LIM.callout) E.push(`${tag}: callout ${i + 1} is ${clen(t)}/25`); });
+  c.snippets.forEach((s, i) => {
+    if (!SNIPPET_HEADERS.includes(s.header)) E.push(`${tag}: snippet header "${s.header}" isn't a Google header`);
+    if (s.values.length < 3) E.push(`${tag}: snippet "${s.header}" needs at least 3 values`);
+    s.values.forEach((v, j) => { if (clen(v) > LIM.snip) E.push(`${tag}: snippet value "${v}" is ${clen(v)}/25`); });
+  });
+  return { E, W };
+}
+function negConflicts(r) {
+  const out = [];
+  const shared = r.shared_negatives.flatMap(l => l.keywords.map(n => ({ n, list: l.name })));
+  r.campaigns.forEach(c => {
+    const kws = c.ad_groups.flatMap(g => g.keywords.map(k => ({ k, g })));
+    const own = arr(c.negatives).map(n => ({ n, list: "campaign list" }));
+    [...shared, ...own].forEach(({ n, list }) => kws.forEach(({ k, g }) => { if (negBlocks(n, k)) out.push(`${c.name}: ${kwSyntax(n)} (${list}) blocks ${kwSyntax(k)} in ${g.name}`); }));
+    c.ad_groups.forEach(g => g.negatives.forEach(n => g.keywords.forEach(k => { if (negBlocks(n, k)) out.push(`${g.name}: ad group negative ${kwSyntax(n)} blocks ${kwSyntax(k)}`); })));
+  });
+  return [...new Set(out)];
+}
+
+/* ---------- Normalizers (also upgrade projects saved by older versions) ---------- */
+function cleanAd(ad) {
+  ad = ad || {};
+  const line = h => typeof h === "string" ? { text: h, category: "", pin: "", note: "" } : { text: str(h.text), category: str(h.category), pin: str(h.pin).toUpperCase().replace(/[^HD0-9]/g, ""), note: str(h.note) };
+  return { label: str(ad.label || ad.theme || "Ad"), hypothesis: str(ad.hypothesis), headlines: arr(ad.headlines).map(line), descriptions: arr(ad.descriptions).map(line) };
+}
+function cleanCampaign(c, inp) {
+  c = c || {};
+  const sl = arr(c.sitelinks).map(s => ({ text: str(s.text), d1: str(s.d1), d2: str(s.d2), url: str(s.url) }));
+  return {
+    name: str(c.name || "Search Campaign"), purpose: str(c.purpose), is_brand: !!c.is_brand,
+    budget_month: num(c.budget_month), budget_day: num(c.budget_day || c.budget_month / 30.4), budget_note: str(c.budget_note), bidding: str(c.bidding), ad_schedule: str(c.ad_schedule),
+    location: str(c.location || c.locations_include || inp?.locIn), landing_page: str(c.landing_page), negatives_line: str(c.negatives_line),
+    negatives: arr(c.negatives).map(k => normKw(k, "Broad")).filter(k => k.text),
+    sitelinks: sl, sitelink_note: str(c.sitelink_note), callouts: arr(c.callouts).map(str), snippets: arr(c.snippets).map(s => ({ header: str(s.header), values: arr(s.values).map(str) })),
+    call_asset: str(c.call_asset), location_asset: str(c.location_asset),
+    ad_groups: arr(c.ad_groups).map(g => ({
+      name: str(g.name || "Ad Group"), intent: str(g.intent), awareness: str(g.awareness), triggers: arr(g.triggers).map(str), framework: str(g.framework),
+      final_url: str(g.final_url || inp?.mainUrl), main_keyword: str(g.main_keyword),
+      display_path: arr(g.display_path).length ? arr(g.display_path).map(p => str(p).replace(/^\/+/, "").replace(/\s+/g, "-")).slice(0, 2) : [str(g.ads?.[0]?.path1), str(g.ads?.[0]?.path2)].filter(Boolean),
+      keywords: arr(g.keywords).map(k => normKw(k)).filter(k => k.text), negatives: arr(g.negatives).map(k => normKw(k, "Broad")).filter(k => k.text), negatives_note: str(g.negatives_note),
+      rsa_count: g.rsa_count, themes: arr(g.themes).map(str), pin_note: str(g.pin_note), ads: arr(g.ads).map(cleanAd)
+    }))
+  };
+}
+function normalizeResult(r, inp) {
+  r = r || {};
+  if (!r.campaigns && r.groups) r.campaigns = [{ name: (r.analysis?.business?.name || "Search") + " | Search", ad_groups: r.groups }];
+  return {
+    analysis: r.analysis || {}, settings: arr(r.settings).map(s => ({ setting: str(s.setting), value: str(s.value) })),
+    confirm_before_launch: arr(r.confirm_before_launch).map(str),
+    shared_negatives: arr(r.shared_negatives).map(l => ({ name: str(l.name || "NEG — LIST"), keywords: arr(l.keywords).map(k => normKw(k, "Broad")).filter(k => k.text) })),
+    shared_note: str(r.shared_note), campaign_neg_note: str(r.campaign_neg_note),
+    campaigns: arr(r.campaigns).map(c => cleanCampaign(c, inp)), cleanup: arr(r.cleanup), changes: arr(r.changes).map(str),
+    overview: r.overview || {}, generatedAt: r.generatedAt || new Date().toISOString()
+  };
+}
+
+/* ---------- State ---------- */
+const S = { sample: null, samplePromise: null, mcpPromise: null, db: null, uid: null, downloads: null, projects: [], projectId: null, result: null, isExample: true, ctl: null, history: [] };
+const memProjects = new Map();
+
+/* ---------- Example (fictional, shown until the first real run) ---------- */
+const EXAMPLE = normalizeResult({
+  analysis: {
+    business: { name: "Example Plumbing Co", short: "EP", market: "Houston", summary: "Fictional sample: a residential plumber in Houston.", voice: "Direct and friendly (derived from the page)" },
+    claims: { supported: ["Licensed & insured", "Upfront pricing before work", "Same-day appointments"], avoid: ["24/7 service (not on the page)"], gaps: ["No rating or review count on the page"] },
+    testing_notes: ["Ad A tests speed and trust; Ad B tests price certainty and convenience."], policy_notes: ["Automatically created assets and AI Max stay off so only this copy serves."], pinning: "Nothing pinned."
+  },
+  overview: { budget_month: 900, market: "Houston" },
+  settings: [{ setting: "Campaign type", value: "Search only. Turn off Search Partners and the Display Network." }, { setting: "Location", value: "Houston, TX" }, { setting: "Location option", value: "Presence: people in or regularly in your included locations" }, { setting: "Automatically created assets", value: "Off. AI Max off. Broad match off." }, { setting: "Ad rotation", value: "Optimize" }],
+  confirm_before_launch: ["Same-day appointments", "Upfront pricing"],
+  shared_negatives: [{ name: "NEG — JOBS & TRAINING", keywords: ["jobs", "hiring", "career", "apprentice", "school", "course"] }, { name: "NEG — DIY & HOW-TO", keywords: ["diy", '"how to"', "tutorial", "youtube"] }],
+  campaigns: [{
+    name: "EP | Search | Core | Houston", budget_month: 900, budget_day: 30, bidding: "Weeks 1-2: Maximize Clicks, max CPC $9. Week 3+: Maximize Conversions.", ad_schedule: "All days, all hours. Call asset only during business hours.", location: "Houston, TX · Presence", landing_page: "https://example.com/", negatives_line: "All 2 shared lists + campaign list (section 03)",
+    negatives: ["commercial", "office"],
+    sitelinks: [{ text: "Water Heater Repair", d1: "Fix or replace your heater", d2: "Upfront price before work", url: "example.com/water-heaters" }, { text: "Book Online", d1: "Pick a time that suits you", d2: "Same-day slots available", url: "example.com/book" }],
+    callouts: ["Licensed & Insured", "Upfront Pricing", "Same-Day Service"], snippets: [{ header: "Service catalog", values: ["Leak Repair", "Drain Cleaning", "Water Heaters"] }],
+    call_asset: "(555) 010-0100 · Google forwarding number on · Count calls of 60 seconds or more · Schedule: business hours",
+    ad_groups: [{
+      name: "Emergency Plumbing", final_url: "https://example.com/emergency-plumbing", display_path: ["Houston", "Emergency"], keywords: ['"emergency plumber houston"', '"emergency plumber near me"', "[burst pipe repair]"],
+      negatives: ["cost", "price"], negatives_note: "Sends cost and price searches to the Estimates ad group.",
+      ads: [{ label: "Trust & Local", headlines: ["{KeyWord:Emergency Plumber Houston}", "Same-Day Plumbing Repairs", "Licensed & Insured Plumbers", "Upfront Price Before We Start", "Burst Pipe? We Can Help Today", "Leak Repair Done Right", "Water Heater Repair Experts", "Local Houston Plumbing Team", "Call Now For Fast Service", "Book Your Visit Online", "No Surprise Fees", "Fix Your Leak Today", "Clean, Careful Technicians", "Stop The Leak Fast", "{KeyWord:Plumber Near You}"],
+        descriptions: ["Leaking pipe or no hot water? Our licensed plumbers fix it same day. Call now.", "See the full price before any work starts. No surprise fees, just honest plumbing.", "Local Houston team with clean, careful techs who respect your home. Book online today.", "Drain, leak and water heater repairs for homes across Houston. Fast, tidy work."] }]
+    }]
+  }],
+  cleanup: [{ rule: "Duplicate", what: "Kept one match type per keyword text.", examples: "emergency plumber houston" }]
+}, {});
+
+/* ---------- Inputs ---------- */
+const IDS = ["url", "site", "biz", "lang", "budget", "launch", "locIn", "locEx", "phone", "hours", "keywords", "camps", "groups", "rsas"];
+function readInputs() {
+  const o = { mode: document.querySelector('input[name=mode]:checked').value, notes: $("#notes").value.trim(), oldText: $("#oldText").value.trim() };
+  IDS.forEach(id => o[id] = $("#" + id).value.trim());
+  o.urls = o.url.split(/\s+/).filter(u => /^https?:\/\//i.test(u)); o.mainUrl = o.urls[0] || "";
+  o.ext = { sitelinks: $("#extSl").checked, callouts: $("#extCo").checked, snippets: $("#extSn").checked };
+  o.brandCamp = $("#brandCamp").checked;
+  return o;
+}
+function writeInputs(i = {}) {
+  const def = { lang: "English", camps: "auto", groups: "auto", rsas: "auto" };
+  IDS.forEach(id => { const e = $("#" + id); e.value = i[id] ?? def[id] ?? ""; if (e.tagName === "SELECT" && !e.value) e.value = def[id] || "auto"; });
+  $("#notes").value = "";
+  const e = i.ext || { sitelinks: true, callouts: true, snippets: true };
+  $("#extSl").checked = !!e.sitelinks; $("#extCo").checked = !!e.callouts; $("#extSn").checked = !!e.snippets;
+  $("#brandCamp").checked = !!i.brandCamp;
+}
+function ctxBlock(inp) {
+  const site = inp.site ? inp.site.slice(0, 60000) : "(NOT AVAILABLE. Use only the links, keywords and instructions. Treat every proof point as a gap.)";
+  return `INPUTS
+Landing pages: ${inp.urls.length ? inp.urls.map((u, i) => `Page ${i + 1}: ${u}`).join(" | ") : "(not given)"}
+Business name: ${inp.biz || "(from the site)"} · Market name: (derive a short market name, e.g. "Metro Atlanta", from the locations)
+Language: ${inp.lang || "English"}
+Monthly ad spend: ${inp.budget ? "$" + inp.budget : "(not given)"} · Launch date: ${inp.launch || "(not given)"}
+Target locations: ${inp.locIn || "(not given: take them from the instructions / client messages, else from the website; if still unknown, list it in confirm_before_launch)"} · Excluded: ${inp.locEx || "(none)"}
+Phone: ${inp.phone || "(not given)"} · Hours: ${inp.hours || "(not given)"} · Address: (from the website if shown)
+Campaigns: ${inp.camps === "auto" ? "you decide" : inp.camps + " exactly"}${inp.brandCamp ? " (include a Brand campaign)" : " (no Brand campaign)"}
+Ad groups in total: ${inp.groups === "auto" ? "you decide" : inp.groups + " exactly"} · RSAs per ad group: ${inp.rsas === "auto" ? "2" : inp.rsas}
+Assets wanted: ${Object.entries(inp.ext).filter(([, v]) => v).map(([k]) => k).join(", ") || "none"}
+
+KEYWORDS FROM USER:
+${inp.keywords || "(none: build the list from the website's own words and say so)"}
+
+INSTRUCTIONS / CLIENT MESSAGES (highest priority):
+${inp.notes || "(none)"}
+
+WEBSITE CONTENT:
+${site}`;
+}
+
+/* ---------- Prompts ---------- */
+const AD_SCHEMA = `{"label":"Trust & Local","hypothesis":"what this RSA tests","headlines":[{"text":"","category":"DKI|Trust & Proof|Offer / Number / Price|Benefit / Feature|Emotional Trigger|Call To Action","pin":"","note":""}],"descriptions":[{"text":"","category":"Problem + Solution|Benefit + Feature|Trust + CTA","pin":"","note":""}]}`;
+
+function promptPlan(inp) {
+  return `${STRATEGY}
+
+${ctxBlock(inp)}
+
+TASK 1 OF 4: Research the business and customer, then plan the account: settings, campaigns (with budgets, bidding, schedule, location, landing page), ad groups (final URL, display path, keywords with match types, ad group negatives with a one-line reason), the things to confirm with the client, and the keyword clean-up log. Do NOT write ads, shared negative lists or assets yet. You have no search volume or CPC data; CPC caps are estimates.
+Reply with only this JSON:
+{"business":{"name":"","short":"2-3 letter code","market":"","summary":"","services":[""],"brands_carried":[""],"voice":"tone + 'derived from the page' if so","phone":"","address":"","hours":""},
+"customer":{"problems":[""],"outcomes":[""],"fears":[""],"motivations":[""]},
+"usps":[{"usp":"","source":"page|user"}],
+"claims":{"supported":[""],"avoid":[""],"gaps":[""]},
+"settings":[{"setting":"Campaign type","value":""},{"setting":"Location","value":""},{"setting":"Location option","value":""},{"setting":"Language","value":""},{"setting":"Conversion goals","value":""},{"setting":"Auto-tagging","value":""},{"setting":"Final URL suffix","value":""},{"setting":"Automatically created assets","value":""},{"setting":"Ad rotation","value":""},{"setting":"Landing pages","value":"Page 1: ... | Page 2: ..."}],
+"confirm_before_launch":["claim or detail the client must confirm"],
+"campaigns":[{"name":"","purpose":"","is_brand":false,"budget_month":0,"budget_day":0,"budget_note":"day|weekday","bidding":"","ad_schedule":"","location":"","landing_page":"","negatives_line":"",
+  "ad_groups":[{"name":"","intent":"","awareness":"","triggers":["",""],"framework":"","final_url":"","display_path":["",""],"main_keyword":"","keywords":[{"text":"","match":"Phrase|Exact"}],"negatives":[{"text":"","match":"Broad"}],"negatives_note":"","rsa_count":2,"themes":["Trust & Local","Convenience & Offer"]}]}],
+"removed_keywords":[{"keyword":"","reason":""}],
+"cleanup":[{"rule":"Duplicate|Close variants|Redundant|Match type|Intent|Unverified|Routing|Other","what":"","examples":""}],
+"testing_notes":[""],"policy_notes":[""]}`;
+}
+const planSummary = r => r.campaigns.map(c => `${c.name}: ` + c.ad_groups.map(g => `${g.name} (${g.keywords.map(kwSyntax).join(", ")})`).join(" | ")).join("\n");
+function promptNegatives(inp, r) {
+  return `${STRATEGY}
+
+BUSINESS: ${JSON.stringify(r.analysis.business)}
+CLAIMS TO AVOID / NOT OFFERED: ${JSON.stringify(r.analysis.claims?.avoid || [])}
+TARGET: ${inp.locIn || "(not given)"} · EXCLUDED: ${inp.locEx || "(none)"}
+INSTRUCTIONS / CLIENT MESSAGES: ${inp.notes || "(none)"}
+
+ACCOUNT PLAN (campaign: ad groups with keywords):
+${planSummary(r)}
+
+TASK 2 OF 4: Write the shared negative keyword lists (applied to every campaign) and one campaign-level list per campaign. Use plain = broad, "phrase", [exact]. Never block one of the account's own keywords. Add one short instruction sentence for each section.
+Reply with only this JSON:
+{"shared_note":"How to create and apply the lists","shared":[{"name":"NEG — JOBS & TRAINING","keywords":["jobs","\\"how to\\"","[free carpet]"]}],
+"campaign_note":"Why the campaign lists exist","campaigns":[{"name":"exact campaign name","keywords":["commercial","\\"property management\\""]}]}`;
+}
+const slimAnalysis = a => JSON.stringify({ business: a.business, customer: a.customer, usps: a.usps, claims: a.claims });
+function promptWrite(inp, r, c, g) {
+  return `${ADCOPY}
+
+BUSINESS RESEARCH (already done):
+${slimAnalysis(r.analysis)}
+THINGS THE CLIENT STILL HAS TO CONFIRM (usable, they are flagged in the sheet): ${JSON.stringify(r.confirm_before_launch)}
+LANGUAGE: ${inp.lang || "English"}
+
+INSTRUCTIONS / CLIENT MESSAGES (highest priority):
+${inp.notes || "(none)"}
+
+CAMPAIGN: ${c.name}${c.is_brand ? " (Brand campaign)" : ""}
+AD GROUP: ${JSON.stringify({ name: g.name, intent: g.intent, awareness: g.awareness, triggers: g.triggers, framework: g.framework, main_keyword: g.main_keyword, keywords: g.keywords.map(kwSyntax), final_url: g.final_url })}
+
+TASK 3 OF 4: Write ${g.rsa_count} RSA(s) for this ad group, one per label: ${JSON.stringify(g.themes)}. Each: exactly 15 headlines and 4 descriptions. Fill "pin" only when a real brand / compliance reason exists (e.g. "H1"), otherwise "". Use "note" for anything worth flagging (a claim to confirm, DKI default, etc.). Count characters carefully; DKI counts only its default text.
+Reply with only this JSON: {"pin_note":"one line if anything is pinned, else empty","ads":[${AD_SCHEMA}]}`;
+}
+function promptAssets(inp, r) {
+  const want = Object.entries(inp.ext).filter(([, v]) => v).map(([k]) => k).join(", ");
+  return `${STRATEGY}
+
+${ADCOPY.split("STEP 6")[1] ? "CALLOUT RULE: STEP 6" + ADCOPY.split("STEP 6")[1].split("STEP 7")[0] : ""}
+BUSINESS RESEARCH: ${slimAnalysis(r.analysis)}
+CONFIRM BEFORE LAUNCH: ${JSON.stringify(r.confirm_before_launch)}
+Campaigns: ${r.campaigns.map(c => `${c.name} (landing page: ${c.landing_page}; ad groups: ${c.ad_groups.map(g => g.name).join(", ")})`).join(" || ")}
+Phone: ${inp.phone || r.analysis.business?.phone || "(unknown)"} · Hours: ${inp.hours || r.analysis.business?.hours || "(unknown)"} · Address: ${r.analysis.business?.address || "(unknown)"}
+INSTRUCTIONS / CLIENT MESSAGES: ${inp.notes || "(none)"}
+
+WEBSITE CONTENT (for real page links):
+${(inp.site || "(not available)").slice(0, 30000)}
+
+TASK 4 OF 4: Write the campaign-level assets for EVERY campaign: ${want || "none"} (empty arrays for types not asked), plus the call asset line and the location asset note (only real details; say what's missing).
+Reply with only this JSON:
+{"campaigns":[{"name":"exact campaign name","sitelinks":[{"text":"","d1":"","d2":"","url":"Page 1/path or real URL"}],"sitelink_note":"","callouts":[""],"snippets":[{"header":"Types","values":["","",""]}],"call_asset":"","location_asset":""}]}`;
+}
+function promptFixAd(ad, issues, g, r) {
+  return `${ADCOPY}
+
+BUSINESS FACTS: ${JSON.stringify(r.analysis.claims || {})}
+AD GROUP: ${g.name} (main keyword: ${g.main_keyword})
+
+This RSA failed checks:
+${issues.map(x => "- " + x).join("\n")}
+
+RSA: ${JSON.stringify(ad)}
+
+TASK: Rewrite only the failing lines so every check passes (headline max 30, description max 90, exactly 15 headlines and 4 descriptions, no repeated first 20 characters). Keep all other lines and pins exactly. Count characters carefully.
+Reply with only the corrected RSA as JSON: ${AD_SCHEMA}`;
+}
+function promptFixAssets(c, issues) {
+  return `${STRATEGY}
+
+These assets failed checks:
+${issues.map(i => "- " + i).join("\n")}
+
+ASSETS: ${JSON.stringify({ name: c.name, sitelinks: c.sitelinks, callouts: c.callouts, snippets: c.snippets })}
+
+TASK: Fix only the failing items; keep the rest. Reply with only JSON: {"sitelinks":[...],"callouts":[...],"snippets":[...]}`;
+}
+function promptUpdate(inp, prev) {
+  return `${STRATEGY}
+
+${ADCOPY}
+
+You are UPDATING an existing Google Ads build sheet. Keep everything the new instructions don't touch exactly as it is. Apply each change everywhere it matters (settings, budgets, campaigns, keywords, negative lists, RSAs, assets, confirm list). Add or remove campaigns, ad groups or RSAs if asked.
+
+PREVIOUS BUILD (JSON):
+${prev ? JSON.stringify(prev).slice(0, 170000) : "(none saved)"}
+
+PREVIOUS BUILD FROM OLD PDF / PASTE:
+${inp.oldText ? inp.oldText.slice(0, 60000) : "(none)"}
+
+${ctxBlock(inp)}
+
+TASK: Return the full updated build as JSON with these keys: analysis, settings, confirm_before_launch, shared_note, shared_negatives [{name, keywords}], campaign_neg_note, campaigns [each with name, budget_month, budget_day, budget_note, bidding, ad_schedule, location, landing_page, negatives_line, negatives, sitelinks, sitelink_note, callouts, snippets, call_asset, location_asset, ad_groups [name, final_url, display_path, keywords {text,match}, negatives, negatives_note, pin_note, ads [label, hypothesis, headlines {text,category,pin,note}, descriptions {...}]]], cleanup, and "changes": ["one line per change and why"]. If there is no previous JSON, rebuild that shape from the old text. Every RSA keeps exactly 15 headlines and 4 descriptions within limits.
+Reply with only the JSON.`;
+}
+
+/* ---------- Progress UI ---------- */
+function setSteps(list) { const ol = $("#steps"); ol.replaceChildren(...list.map((t, i) => el("li", { id: "st" + i, text: t }))); ol.hidden = false; }
+function step(i, state, text) { const li = $("#st" + i); if (!li) return; li.className = state; if (text) li.textContent = text; }
+function formMsg(text, bad) { const m = $("#formMsg"); m.hidden = !text; m.className = "msg" + (bad ? " bad" : ""); m.textContent = text || ""; }
+const ERR_COPY = {
+  not_granted: "Claude access wasn't allowed for this page. Reload and choose Allow.",
+  sampling_disabled: "Claude isn't available for this account here.",
+  rate_limited: "Free usage limit reached. The app already waits and retries; if this keeps showing, try again in a few minutes or tomorrow.",
+  session_expired: "Your session expired. Sign in again and retry.",
+  invalid_json: "Claude's answer came back in the wrong shape. Press Build again.",
+  prompt_too_large: "The pasted content is too long. Paste only the main page text.",
+  refused: "Claude declined this input. Check the pasted content and instructions.",
+  cancelled: "Stopped.",
+  no_key: "AI key is missing. Open the .env file, paste your key, then restart the app.",
+  bad_key: "The AI key was rejected. Check the key in the .env file and restart the app.",
+  server_down: "The local server stopped. Start the app again (start.bat) and reload this page.",
+  provider_error: "The AI provider returned an error. Wait a minute and press Build again."
+};
+const errText = e => ERR_COPY[e && e.code] || ("Something went wrong talking to the AI. Press Build to try again." + (e && e.message ? " (" + e.message + ")" : ""));
+
+/* ---------- Generation ---------- */
+const bizName = r => r?.analysis?.business?.name || "";
+const allGroups = r => r.campaigns.flatMap(c => c.ad_groups.map(g => ({ c, g })));
+async function ask(prompt, signal, tier = "complex") { return S.sample.json(prompt, { modelTier: tier, signal, cache: false }); }
+
+const pageText = p => typeof p === "string" ? p : p && typeof p === "object" ? (p.text || p.content || p.pageText || JSON.stringify(p)) : "";
+const siteSlug = u => { try { const x = new URL(u); return ((x.hostname.replace(/^www\./, "") + x.pathname.replace(/\/+$/, "")).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 120)) || "site"; } catch { return "site"; } };
+const joinSites = (list) => list.map(x => `\n\n=== PAGE: ${x.url} ===\n` + x.text.slice(0, 30000)).join("").trim().slice(0, 60000);
+async function readSite(inp, idx, signal) {
+  if (inp.site) { step(idx, "done", "Using the pasted website content"); return; }
+  if (!inp.urls.length) { step(idx, "done", "No link given · working from keywords & instructions"); return; }
+  const wanted = [...inp.urls.slice(0, 3)];
+  try { const home = new URL(inp.urls[0]).origin + "/"; if (!wanted.includes(home)) wanted.push(home); } catch {}
+  const useText = (list, label) => { inp.site = joinSites(list); $("#site").value = inp.site; step(idx, "done", `${label} (${list.length} page${list.length > 1 ? "s" : ""})`); };
+  if (window.LOCAL_MODE) {
+    step(idx, "run", "Opening the website…");
+    const got = []; let why = "";
+    for (const u of wanted) {
+      try {
+        const r = await fetch("/api/site?url=" + encodeURIComponent(u), { signal });
+        const j = await r.json();
+        if (!r.ok) throw new Error(j.message || "HTTP " + r.status);
+        if (!got.some(x => x.url === j.url)) got.push({ url: j.url, text: str(j.text), thin: j.thin });
+      } catch (e) { if (e && e.name === "AbortError") throw { code: "cancelled" }; if (!why) why = (e && e.message) || "unknown error"; }
+    }
+    if (got.length) {
+      useText(got, "Website read");
+      if (got.every(x => x.thin)) formMsg("The page text is very short (the site probably loads its content with JavaScript). Paste the page text into Website content for better results, or install Playwright (see README).", false);
+      return;
+    }
+    step(idx, "err", "Website couldn't be read");
+    formMsg("Couldn't read the website (" + why + "). The build continues without it, so proof points will show as gaps. For better results paste the page text into Website content and build again.", false);
+    return;
+  }
+  /* 1. Website text already saved for these links (read earlier by Claude or by this page). */
+  if (S.db) {
+    step(idx, "run", "Looking for saved website text…");
+    try {
+      const got = [];
+      for (const u of wanted) { const d = await S.db.collection("sites").doc(siteSlug(u)).get(); const x = d.exists ? d.data() : null; if (x && x.text) got.push({ url: x.url || u, text: str(x.text) }); }
+      if (got.length) { useText(got, "Website loaded from saved reads"); return; }
+    } catch {}
+  }
+  /* 3. Browser tab fallback: ask Claude in the chat to read the site, then continue by itself when the text arrives. */
+  const viaClaude = async why => {
+    if (!S.db) return fail(why);
+    try { for (const u of wanted) await S.db.collection("sites").doc(siteSlug(u)).set({ url: u, status: "pending", text: "", updatedAt: new Date().toISOString() }); } catch { return fail(why); }
+    step(idx, "run", "Waiting for website text from Claude…");
+    formMsg("This page can't open websites from a browser tab. Go to your Claude chat and send: read the website for RSA Studio. The text arrives here by itself and the build continues. Or press Build without website. Reason: " + why, false);
+    const skip = $("#skipSite"); skip.hidden = false;
+    const got = await new Promise(resolve => {
+      let unsub = null, over = false;
+      const finish = v => { if (over) return; over = true; try { unsub && unsub(); } catch {} skip.hidden = true; skip.onclick = null; resolve(v); };
+      skip.onclick = () => finish([]);
+      if (signal) signal.addEventListener("abort", () => finish([]));
+      try {
+        unsub = S.db.collection("sites").onSnapshot(snap => {
+          const by = new Map(snap.docs.filter(d => d.exists).map(d => [d.id, d.data()]));
+          const main = by.get(siteSlug(wanted[0]));
+          if (main && main.text) finish(wanted.map(u => by.get(siteSlug(u))).filter(x => x && x.text).map(x => ({ url: x.url, text: str(x.text) })));
+        }, () => finish([]));
+      } catch { finish([]); }
+    });
+    formMsg("");
+    if (!got.length) return fail("Building without website text");
+    useText(got, "Website text received from Claude");
+  };
+  step(idx, "run", "Opening the website…");
+  const mcp = S.mcpPromise ? await S.mcpPromise : null;
+  const fail = why => { step(idx, "err", why); formMsg("Couldn't read the website automatically, so proof points will show as gaps. Automatic reading works in the Claude desktop app, or paste the page text into Website content.", false); };
+  if (!mcp) return viaClaude("the app browser isn't connected to this page (mcp unavailable)");
+  const pages = [...inp.urls.slice(0, 3)];
+  try { const home = new URL(inp.urls[0]).origin + "/"; if (!pages.includes(home)) pages.push(home); } catch {}
+  let text = "", got = 0;
+  for (const url of pages) {
+    try {
+      const r = await mcp.callTool("host:claude_browser", "preview_start", { url }, { cache: false });
+      let tabId = r.payload && typeof r.payload === "object" ? r.payload.tabId : undefined;
+      if (tabId == null) { const m = JSON.stringify(r.content || r.payload || "").match(/tab\s*id\W*(\d+)/i); if (m) tabId = +m[1]; }
+      await new Promise(res => setTimeout(res, 2500));
+      const g = await mcp.callTool("host:claude_browser", "get_page_text", tabId != null ? { tabId } : {}, { cache: false });
+      const t = pageText(g.payload) || (g.content || []).filter(c => c.type === "text").map(c => c.text).join("\n");
+      if (t) { text += `\n\n=== PAGE: ${url} ===\n` + t.slice(0, 30000); got++; }
+    } catch (e) {
+      if (url === pages[0]) return viaClaude(`the app browser returned: ${(e && (e.code || e.message)) || "unknown error"}`);
+    }
+  }
+  if (!text.trim()) return fail("Website page was empty");
+  inp.site = text.trim().slice(0, 60000); $("#site").value = inp.site;
+  step(idx, "done", `Website read (${got} page${got > 1 ? "s" : ""})`);
+}
+
+async function runNew(inp, signal) {
+  setSteps(["Read website", "Research & plan account", "Negative keyword lists", "Write RSAs", "Write assets", "Check every character"]);
+  await readSite(inp, 0, signal);
+  step(1, "run");
+  const p = await ask(promptPlan(inp), signal);
+  const result = normalizeResult({ analysis: { business: p.business, customer: p.customer, usps: p.usps, claims: p.claims, removed_keywords: arr(p.removed_keywords), testing_notes: p.testing_notes, policy_notes: p.policy_notes },
+    settings: p.settings, confirm_before_launch: p.confirm_before_launch, campaigns: p.campaigns, cleanup: p.cleanup, overview: { budget_month: num(inp.budget), market: p.business?.market || "", launch: inp.launch } }, inp);
+  if (!result.campaigns.some(c => c.ad_groups.length)) throw { code: "invalid_json" };
+  result.campaigns.forEach(c => c.ad_groups.forEach(g => {
+    const n = inp.rsas === "auto" ? 2 : +inp.rsas;
+    const th = g.themes.slice(0, n); while (th.length < n) th.push(["Trust & Local", "Convenience & Offer", "Price Certainty"][th.length] || "Angle " + (th.length + 1));
+    g.rsa_count = n; g.themes = th;
+  }));
+  const ng = allGroups(result).length;
+  step(1, "done", `Plan ready · ${result.campaigns.length} campaigns, ${ng} ad groups`);
+  render(result, false);
+
+  step(2, "run");
+  try {
+    const n = await ask(promptNegatives(inp, result), signal);
+    result.shared_note = str(n.shared_note); result.campaign_neg_note = str(n.campaign_note);
+    result.shared_negatives = arr(n.shared).map(l => ({ name: str(l.name || "NEG — LIST"), keywords: arr(l.keywords).map(k => normKw(k, "Broad")).filter(k => k.text) }));
+    arr(n.campaigns).forEach(nc => { const c = result.campaigns.find(x => norm(x.name) === norm(nc.name)); if (c) c.negatives = arr(nc.keywords).map(k => normKw(k, "Broad")).filter(k => k.text); });
+    step(2, "done", `Negatives ready · ${result.shared_negatives.length} shared lists`);
+  } catch (e) { if (e.code === "cancelled") throw e; step(2, "err", "Negative lists failed · continuing"); }
+  render(result, false);
+
+  const list = allGroups(result);
+  for (let i = 0; i < list.length; i++) {
+    const { c, g } = list[i];
+    step(3, "run", `Writing ${g.name} (${i + 1}/${list.length})`);
+    const w = await ask(promptWrite(inp, result, c, g), signal);
+    g.ads = arr(w.ads).map(cleanAd); g.pin_note = str(w.pin_note);
+    render(result, false);
+  }
+  step(3, "done", "RSAs written");
+  step(4, "run");
+  const a = await ask(promptAssets(inp, result), signal);
+  arr(a.campaigns).forEach(ac => { const c = result.campaigns.find(x => norm(x.name) === norm(ac.name)); if (!c) return; const n = cleanCampaign({ ...ac, ad_groups: [] }); Object.assign(c, { sitelinks: n.sitelinks, sitelink_note: n.sitelink_note, callouts: n.callouts, snippets: n.snippets, call_asset: n.call_asset, location_asset: n.location_asset }); });
+  step(4, "done");
+  return result;
+}
+
+async function runUpdate(inp, signal) {
+  setSteps(["Read previous build & changes", "Check every character"]);
+  step(0, "run");
+  const prev = S.result && !S.isExample ? S.result : null;
+  const r = await ask(promptUpdate(inp, prev), signal);
+  const result = normalizeResult({ ...r, shared_negatives: r.shared_negatives || prev?.shared_negatives, overview: { ...(prev?.overview || {}), budget_month: num(inp.budget) || prev?.overview?.budget_month, launch: inp.launch || prev?.overview?.launch, market: r.analysis?.business?.market || prev?.overview?.market }, generatedAt: new Date().toISOString() }, inp);
+  if (!result.campaigns.length) throw { code: "invalid_json" };
+  step(0, "done", `Updated · ${result.changes.length} change${result.changes.length === 1 ? "" : "s"}`);
+  return result;
+}
+
+async function fixPass(result, signal, idx) {
+  let fixed = 0;
+  for (const { g } of allGroups(result)) {
+    g.display_path = g.display_path.map(p => p.replace(/\s+/g, "-"));
+    for (let k = 0; k < g.ads.length; k++) {
+      const v = validateAd(g.ads[k]);
+      if (!v.E.length) continue;
+      step(idx, "run", `Fixing ${g.name} · Ad ${String.fromCharCode(65 + k)}`);
+      try { const r = cleanAd(await ask(promptFixAd(g.ads[k], v.E, g, result), signal, "default")); if (r.headlines.length) { g.ads[k] = r; fixed++; } }
+      catch (e) { if (e.code === "cancelled") throw e; }
+    }
+  }
+  for (const c of result.campaigns) {
+    const v = validateAssets(c);
+    if (!v.E.length) continue;
+    step(idx, "run", `Fixing assets · ${c.name}`);
+    try { const n = cleanCampaign({ ...(await ask(promptFixAssets(c, v.E), signal, "default")), ad_groups: [] }); if (n.sitelinks.length || n.callouts.length) { c.sitelinks = n.sitelinks; c.callouts = n.callouts; c.snippets = n.snippets; fixed++; } }
+    catch (e) { if (e.code === "cancelled") throw e; }
+  }
+  const allKw = allGroups(result).flatMap(({ g }) => g.keywords);
+  const keep = (n, kws) => !kws.some(k => negBlocks(n, k));
+  result.shared_negatives.forEach(l => l.keywords = l.keywords.filter(n => keep(n, allKw)));
+  result.campaigns.forEach(c => { const ck = c.ad_groups.flatMap(g => g.keywords); c.negatives = c.negatives.filter(n => keep(n, ck)); c.ad_groups.forEach(g => g.negatives = g.negatives.filter(n => keep(n, g.keywords))); });
+  return fixed;
+}
+const errorsLeft = r => allGroups(r).reduce((n, { g }) => n + validatePath(g).length + g.ads.reduce((m, ad) => m + validateAd(ad).E.length, 0), 0) + r.campaigns.reduce((n, c) => n + validateAssets(c).E.length, 0);
+
+async function generate(ev) {
+  ev.preventDefault();
+  if (!S.sample && S.samplePromise) { formMsg("Connecting…", false); S.sample = await S.samplePromise.catch(() => null); formMsg(""); }
+  if (!S.sample) { formMsg("Claude couldn't connect in this view. Open the tool from its card in your Claude chat (or claude.ai → Artifacts), not a separate browser tab, then reload.", true); return; }
+  const inp = readInputs();
+  if (inp.mode === "new" && !inp.site && !inp.urls.length && !inp.notes) { formMsg("Add a landing page link, website content, or instructions first.", true); return; }
+  if (inp.mode === "update" && (S.isExample || !S.result) && !inp.oldText) { formMsg("Load a saved project or add the old PDF / pasted sheet to update.", true); return; }
+  if (inp.mode === "update" && !inp.notes) { formMsg("Write what should change in Instructions & client messages.", true); return; }
+  formMsg("");
+  S.ctl = new AbortController(); const signal = S.ctl.signal;
+  $("#go").disabled = true; $("#stop").hidden = false;
+  try {
+    const result = inp.mode === "update" ? await runUpdate(inp, signal) : await runNew(inp, signal);
+    const ci = $("#steps").children.length - 1;
+    step(ci, "run");
+    const fixed = await fixPass(result, signal, ci);
+    const left = errorsLeft(result);
+    step(ci, left ? "err" : "done", left ? `${left} line(s) still over a limit · edit them in the sheet` : fixed ? `All checks pass (${fixed} auto-fixed)` : "All checks pass");
+    if (!inp.biz && bizName(result)) $("#biz").value = bizName(result);
+    S.history.push({ at: new Date().toISOString(), mode: inp.mode, instruction: inp.notes });
+    S.result = result; S.isExample = false;
+    render(result, false);
+    await saveProject();
+  } catch (e) {
+    const li = [...$("#steps").children].find(x => x.className === "run"); if (li) li.className = "err";
+    formMsg(errText(e), e.code !== "cancelled");
+  } finally { $("#go").disabled = false; $("#stop").hidden = true; S.ctl = null; }
+}
+
+/* ---------- Render ---------- */
+function list(items) { items = arr(items).filter(Boolean); return items.length ? el("ul", { class: "plain" }, items.map(t => el("li", { text: typeof t === "string" ? t : (t.usp || (t.keyword ? `${t.keyword} · ${t.reason || ""}` : JSON.stringify(t))) }))) : el("p", { class: "note", text: "None" }); }
+function editable(td, obj, key, onChange) {
+  td.setAttribute("contenteditable", "plaintext-only");
+  if (td.contentEditable !== "plaintext-only") td.setAttribute("contenteditable", "true");
+  td.addEventListener("input", () => { obj[key] = td.textContent.replace(/\n/g, " "); markDirty(); onChange(); });
+  td.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); td.blur(); } });
+  return td;
+}
+const copyBtn = (getText, label = "Copy") => { const b = el("button", { class: "small", type: "button", text: label }); b.addEventListener("click", () => copyText(getText(), b, label)); return b; };
+function kvTable(rows) { return el("div", { class: "tw" }, el("table", { class: "kv" }, el("tbody", {}, rows.filter(r => r[1]).map(([k, v]) => el("tr", {}, el("th", { text: k }), v && v.nodeType ? el("td", {}, v) : el("td", { text: v })))))); }
+function dataTable(head, rows) { return el("div", { class: "tw" }, el("table", { class: "data" }, el("thead", {}, el("tr", {}, head.map(h => el("th", { text: h })))), el("tbody", {}, rows.map(r => el("tr", {}, r.map(c => c && c.nodeType ? c : el("td", { text: c ?? "" }))))))); }
+function negBox(title, kws) {
+  const lines = kws.map(kwSyntax);
+  return el("div", { class: "nbox" }, el("div", { class: "bh" }, el("b", { text: title }), lines.length ? copyBtn(() => lines.join("\n")) : null), el("div", { class: "kbox" }, lines.length ? lines.map(t => el("div", { text: t })) : el("div", { text: "None" })));
+}
+function budgetText(c) { return c.budget_month ? `${money(c.budget_month)} / month · ${money(c.budget_day)} / ${c.budget_note === "weekday" ? "weekday" : "day"}` : "Set budget"; }
+function counts(r) { const g = allGroups(r); return { camps: r.campaigns.length, groups: g.length, kws: g.reduce((n, x) => n + x.g.keywords.length, 0), ads: g.reduce((n, x) => n + x.g.ads.length, 0) }; }
+const totalMonth = r => num(r.overview?.budget_month) || r.campaigns.reduce((n, c) => n + c.budget_month, 0);
+
+function adBlock(ad, idx) {
+  const letter = String.fromCharCode(65 + idx);
+  const box = el("div", { class: "ad" }), issues = el("div", { class: "issues" }), hR = [], dR = [];
+  const refresh = () => {
+    const v = validateAd(ad);
+    hR.forEach((r, i) => { const x = v.rowH[i]; if (!x) return; r.c.textContent = x.L; r.c.className = "ch" + (x.L > 30 ? " over" : ""); r.tr.className = x.e.length ? "flag" : ""; });
+    dR.forEach((r, i) => { const x = v.rowD[i]; if (!x) return; r.c.textContent = x.L; r.c.className = "ch" + (x.L > 90 ? " over" : ""); r.tr.className = x.e.length ? "flag" : ""; });
+    issues.replaceChildren(...(v.E.length || v.W.length ? [...v.E.map(t => el("div", { class: "e", text: "✕ " + t })), ...v.W.map(t => el("div", { class: "w", text: "! " + t }))] : [el("div", { class: "okline", text: "✓ 15 headlines, 4 descriptions, all within limits" })]));
+  };
+  box.append(el("div", { class: "adbar" }, el("span", { text: `Ad ${letter} · ${ad.label}` }), copyBtn(() => [...ad.headlines.map(h => h.text), ...ad.descriptions.map(d => d.text)].join("\n"))));
+  const ht = el("tbody");
+  ad.headlines.forEach((h, i) => { const c = el("td", { class: "ch" }), t = el("td", { text: h.text }); const tr = el("tr", {}, el("td", { class: "n", text: i + 1 }), t, c, el("td", { class: "pin", text: h.pin || "" })); if (h.category || h.note) t.title = [h.category, h.note].filter(Boolean).join(" · "); editable(t, h, "text", refresh); hR.push({ tr, c }); ht.append(tr); });
+  const dt = el("tbody");
+  ad.descriptions.forEach((d, i) => { const c = el("td", { class: "ch" }), t = el("td", { text: d.text }); const tr = el("tr", {}, el("td", { class: "n", text: i + 1 }), t, c); if (d.category || d.note) t.title = [d.category, d.note].filter(Boolean).join(" · "); editable(t, d, "text", refresh); dR.push({ tr, c }); dt.append(tr); });
+  box.append(el("div", { class: "tw" }, el("table", { class: "data" }, el("thead", {}, el("tr", {}, ["#", "Headline (max 30)", "CH", "PIN"].map(x => el("th", { text: x })))), ht)));
+  box.append(el("div", { class: "tw" }, el("table", { class: "data" }, el("thead", {}, el("tr", {}, ["#", "Description (max 90)", "CH"].map(x => el("th", { text: x })))), dt)));
+  if (ad.hypothesis) box.append(el("div", { class: "hyp", text: "Tests: " + ad.hypothesis }));
+  box.append(issues); refresh();
+  return box;
+}
+
+function assetsSection(c) {
+  const wrap = el("div", { style: "display:flex;flex-direction:column;gap:8px" }), issues = el("div", { class: "issues" }), counters = [];
+  const cnt = (lim, get) => { const td = el("td", { class: "ch" }); counters.push([td, lim, get]); return td; };
+  const refresh = () => {
+    counters.forEach(([td, lim, get]) => { const L = clen(get()); td.textContent = L; td.className = "ch" + (L > lim ? " over" : ""); });
+    const v = validateAssets(c);
+    issues.replaceChildren(...(v.E.length ? v.E.map(t => el("div", { class: "e", text: "✕ " + t })) : [el("div", { class: "okline", text: "✓ Assets within limits" })]));
+  };
+  if (c.sitelinks.length) {
+    wrap.append(el("h4", { text: "Sitelinks (campaign level)" }));
+    wrap.append(dataTable(["Sitelink text (max 25)", "CH", "Description 1 (max 35)", "Description 2 (max 35)", "Final URL"], c.sitelinks.map(s => [
+      editable(el("td", { text: s.text }), s, "text", refresh), cnt(25, () => s.text), editable(el("td", { text: s.d1 }), s, "d1", refresh), editable(el("td", { text: s.d2 }), s, "d2", refresh), el("td", { class: "url", text: s.url })])));
+    if (c.sitelink_note) wrap.append(el("p", { class: "note", text: c.sitelink_note }));
+  }
+  if (c.callouts.length) {
+    wrap.append(el("h4", { text: "Callouts (max 25)" }));
+    const p = el("p", { style: "margin:0" });
+    c.callouts.forEach((t, i) => { const o = { v: t }; const s = el("span", { text: t }); editable(s, o, "v", () => { c.callouts[i] = o.v; refresh(); }); p.append(s, i < c.callouts.length - 1 ? ", " : ""); });
+    wrap.append(p);
+  }
+  if (c.snippets.length) {
+    wrap.append(el("h4", { text: "Structured snippets" }));
+    wrap.append(dataTable(["Header", "Values (max 25 each)"], c.snippets.map(s => { const o = { v: s.values.join(", ") }; return [el("td", { text: s.header, style: "font-weight:600" }), editable(el("td", { text: o.v }), o, "v", () => { s.values = o.v.split(",").map(x => x.trim()).filter(Boolean); refresh(); })]; })));
+  }
+  if (c.call_asset) wrap.append(el("h4", { text: "Call asset" }), el("p", { style: "margin:0", text: c.call_asset }));
+  if (c.location_asset) wrap.append(el("p", { class: "note", text: c.location_asset }));
+  wrap.append(issues); refresh();
+  return wrap;
+}
+
+function render(r, isExample) {
+  const out = $("#out"), a = r.analysis, b = a.business || {}, k = counts(r), month = totalMonth(r);
+  const market = r.overview?.market || b.market || "";
+  const kids = [];
+  const dlCsv = el("button", { type: "button", text: "Ads Editor CSV", onclick: () => exportCSV(dlCsv) });
+  const dlPdf = el("button", { type: "button", text: "Build sheet PDF", onclick: () => exportPDF(dlPdf) });
+  kids.push(el("div", { class: "cover" },
+    el("div", { class: "eyebrow", text: "Google Ads build sheet · copy & paste" }),
+    el("h2", {}, b.name || "Your business", el("br"), `${market ? market + " " : ""}Search Campaigns`),
+    el("p", { class: "sub", text: `Campaign settings, ad groups, keywords, negative keywords, ${k.groups ? Math.round(k.ads / k.groups) || 2 : 2} responsive search ads per ad group, sitelinks, callouts and structured snippets.` }),
+    el("div", { class: "stats" }, el("div", {}, el("b", { text: "AD SPEND" }), el("span", { text: month ? `${money(month)} / month` : "Not set" })), el("div", {}, el("b", { text: "CAMPAIGNS" }), el("span", { text: k.camps })), el("div", {}, el("b", { text: "AD GROUPS" }), el("span", { text: k.groups })), el("div", {}, el("b", { text: "ADS" }), el("span", { text: k.ads }))),
+    el("div", { class: "dl" }, dlCsv, dlPdf, isExample ? el("span", { class: "tag", text: "Example · fictional business" }) : null),
+    el("p", { class: "fine" }, el("b", { text: "Keyword format: " }), el("code", { text: '"phrase match"' }), " · ", el("code", { text: "[exact match]" }), ". Negatives without symbols are broad match. Every headline, description and asset is checked against Google's character limits.")));
+
+  if (r.changes.length) kids.push(el("section", { class: "page" }, el("div", { class: "eyebrow", text: "Update" }), el("h3", { text: "What changed" }), list(r.changes)));
+
+  // 01 settings
+  const s1 = el("section", { class: "page" }, el("div", { class: "eyebrow", text: "01 · Account settings" }), el("h3", { text: "Set once for the whole account" }));
+  if (r.settings.length) s1.append(kvTable(r.settings.map(s => [s.setting, s.setting === "Final URL suffix" ? el("code", { text: s.value }) : s.value])));
+  s1.append(el("h4", { text: "Campaign overview" }));
+  s1.append(dataTable(["Campaign name", "Budget", "Ad groups", "Landing page"], [...r.campaigns.map(c => [el("td", { text: c.name, style: "font-weight:600" }), budgetText(c), String(c.ad_groups.length), c.landing_page]), [el("td", { text: "Total", style: "font-weight:600" }), el("td", { text: `${money(r.campaigns.reduce((n, c) => n + c.budget_month, 0))} / month`, style: "font-weight:600" }), el("td", { text: String(k.groups), style: "font-weight:600" }), ""]]));
+  if (r.confirm_before_launch.length) s1.append(el("div", { class: "callout" }, el("b", { text: "Confirm with the client before launch: " }), r.confirm_before_launch.join(" · "), ". If any one is not true, delete every headline, description or asset that uses it."));
+  kids.push(s1);
+
+  // 02 shared negatives
+  if (r.shared_negatives.length) kids.push(el("section", { class: "page" }, el("div", { class: "eyebrow", text: "02 · Shared negative keyword lists" }), el("h3", { text: `Create these ${r.shared_negatives.length} lists and apply them to all ${k.camps} campaigns` }),
+    el("p", { class: "note", text: r.shared_note || "Tools › Shared library › Negative keyword lists. Name each list as shown, paste the keywords, and apply it to every campaign." }),
+    el("div", { class: "boxes" }, r.shared_negatives.map(l => negBox(l.name, l.keywords)))));
+  // 03 campaign negatives
+  if (r.campaigns.some(c => c.negatives.length)) kids.push(el("section", { class: "page" }, el("div", { class: "eyebrow", text: "03 · Campaign-level negative keywords" }), el("h3", { text: "Add these inside each campaign" }),
+    el("p", { class: "note", text: r.campaign_neg_note || "These keep every search in one campaign only." }),
+    el("div", { class: "boxes" }, r.campaigns.filter(c => c.negatives.length).map(c => negBox(c.name, c.negatives)))));
+
+  // campaigns + ad groups
+  r.campaigns.forEach(c => {
+    kids.push(el("section", { class: "page" }, el("div", { class: "eyebrow", text: "Campaign" }), el("h3", { class: "mono", text: c.name }),
+      kvTable([["Budget", budgetText(c)], ["Bidding", c.bidding], ["Ad schedule", c.ad_schedule], ["Location", c.location], ["Landing page", c.landing_page], ["Ad groups", c.ad_groups.map(g => g.name).join(", ")], ["Negatives", c.negatives_line || `All ${r.shared_negatives.length} shared lists + campaign list (section 03)`]]),
+      assetsSection(c)));
+    c.ad_groups.forEach(g => {
+      const pathTxt = "/" + g.display_path.filter(Boolean).join("/");
+      const pathEl = el("code", { text: pathTxt });
+      const pIssues = el("div", { class: "issues" });
+      const refreshPath = () => { pathEl.textContent = "/" + g.display_path.filter(Boolean).join("/"); const e = validatePath(g); pIssues.replaceChildren(...e.map(t => el("div", { class: "e", text: "✕ " + t }))); };
+      const sec = el("section", { class: "page" }, el("div", { class: "crumb", text: c.name + " ›" }), el("h3", { text: "Ad group: " + g.name }),
+        el("div", { class: "row-url" }, el("b", { text: "Final URL" }), el("span", { text: g.final_url || "—" }), el("b", { text: "Display path" }), pathEl), pIssues,
+        el("div", { class: "nbox" }, el("div", { class: "bh" }, el("b", { text: `Keywords (${g.keywords.length})` }), copyBtn(() => g.keywords.map(kwSyntax).join("\n"))), el("div", { class: "kbox two" }, g.keywords.map(k => el("div", { text: kwSyntax(k) })))));
+      if (g.negatives.length) sec.append(el("div", { class: "eyebrow", style: "color:var(--muted);font-size:10.5px", text: "Ad group negative keywords" }), el("div", { class: "chipline" }, g.negatives.map(n => el("code", { text: kwSyntax(n) })), g.negatives_note ? el("span", { text: g.negatives_note }) : null));
+      const ads = el("div", { class: "ads" });
+      if (!g.ads.length) ads.append(el("p", { class: "note", text: "Writing ads for this ad group…" }));
+      g.ads.forEach((ad, i) => ads.append(adBlock(ad, i)));
+      sec.append(ads);
+      if (g.pin_note) sec.append(el("p", { class: "note", text: g.pin_note }));
+      refreshPath(); kids.push(sec);
+    });
+  });
+
+  // notes
+  const conflicts = negConflicts(r);
+  kids.push(el("section", { class: "page" }, el("div", { class: "eyebrow", text: "Notes & checks" }), el("h3", { text: "Claim ledger, testing and clean-up" }),
+    el("div", { class: "cols3" }, el("div", {}, el("b", { text: "Using (supported)" }), list(a.claims?.supported)), el("div", {}, el("b", { text: "Avoiding" }), list(a.claims?.avoid)), el("div", {}, el("b", { text: "Data gaps" }), list(a.claims?.gaps))),
+    b.voice ? el("p", { class: "note", text: "Voice: " + b.voice }) : null,
+    el("div", { class: "cols3" }, el("div", {}, el("b", { text: "Testing notes" }), list(a.testing_notes)), el("div", {}, el("b", { text: "Policy notes" }), list(a.policy_notes)), el("div", {}, el("b", { text: "Removed keywords" }), list(a.removed_keywords))),
+    r.cleanup.length ? el("h4", { text: "Keyword clean-up applied" }) : null, r.cleanup.length ? dataTable(["Rule", "What we did", "Examples"], r.cleanup.map(x => [el("td", { text: str(x.rule), style: "font-weight:600" }), str(x.what), str(x.examples)])) : null,
+    el("h4", { text: "Negative keyword check" }), conflicts.length ? el("div", { class: "issues" }, conflicts.map(t => el("div", { class: "w", text: "! " + t }))) : el("p", { class: "note", style: "color:var(--ok)", text: "✓ No negative keyword blocks one of the account's own keywords." })));
+  kids.push(el("p", { class: "footline", text: "No ads were created or changed — this is copy for your review before publishing." }));
+  out.replaceChildren(...kids);
+}
+
+/* ---------- Copy / export ---------- */
+async function copyText(t, btn, label = "Copy") {
+  try { await navigator.clipboard.writeText(t); btn.textContent = "Copied"; }
+  catch { const ta = el("textarea", { style: "position:fixed;opacity:0" }); ta.value = t; document.body.append(ta); ta.select(); try { document.execCommand("copy"); btn.textContent = "Copied"; } catch { btn.textContent = "Select & copy"; } ta.remove(); }
+  setTimeout(() => btn.textContent = label, 1500);
+}
+const csvCell = v => { v = v == null ? "" : String(v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+function buildCSV(r) {
+  const H = Array.from({ length: 15 }, (_, i) => "Headline " + (i + 1)), HP = H.map(h => h + " position"), D = Array.from({ length: 4 }, (_, i) => "Description " + (i + 1)), DP = D.map(d => d + " position");
+  const cols = ["Campaign", "Campaign Type", "Budget", "Ad group", "Keyword", "Criterion Type", "Ad type", ...H, ...HP, ...D, ...DP, "Path 1", "Path 2", "Final URL", "Link Text", "Description Line 1", "Description Line 2", "Callout text", "Header", "Snippet Values"];
+  const rows = [], row = o => rows.push(cols.map(c => o[c] ?? ""));
+  const shared = r.shared_negatives.flatMap(l => l.keywords);
+  r.campaigns.forEach(c => {
+    const camp = c.name;
+    row({ Campaign: camp, "Campaign Type": "Search", Budget: c.budget_day ? Math.round(c.budget_day * 100) / 100 : "" });
+    [...shared, ...c.negatives].forEach(n => row({ Campaign: camp, Keyword: n.text, "Criterion Type": "Negative " + n.match }));
+    c.ad_groups.forEach(g => {
+      row({ Campaign: camp, "Ad group": g.name });
+      g.keywords.forEach(k => row({ Campaign: camp, "Ad group": g.name, Keyword: k.text, "Criterion Type": k.match }));
+      g.negatives.forEach(n => row({ Campaign: camp, "Ad group": g.name, Keyword: n.text, "Criterion Type": "Negative " + n.match }));
+      g.ads.forEach(ad => {
+        const o = { Campaign: camp, "Ad group": g.name, "Ad type": "Responsive search ad", "Path 1": g.display_path[0] || "", "Path 2": g.display_path[1] || "", "Final URL": g.final_url };
+        ad.headlines.slice(0, 15).forEach((h, i) => { o[H[i]] = h.text; const p = (h.pin || "").match(/\d/); if (p) o[HP[i]] = p[0]; });
+        ad.descriptions.slice(0, 4).forEach((d, i) => { o[D[i]] = d.text; const p = (d.pin || "").match(/\d/); if (p) o[DP[i]] = p[0]; });
+        row(o);
+      });
+    });
+    c.sitelinks.forEach(s => row({ Campaign: camp, "Link Text": s.text, "Description Line 1": s.d1, "Description Line 2": s.d2, "Final URL": /^https?:/.test(s.url) ? s.url : "" }));
+    c.callouts.forEach(t => row({ Campaign: camp, "Callout text": t }));
+    c.snippets.forEach(s => row({ Campaign: camp, Header: s.header, "Snippet Values": s.values.join(";") }));
+  });
+  return "﻿" + [cols, ...rows].map(rw => rw.map(csvCell).join(",")).join("\r\n");
+}
+const fileBase = r => (bizName(r) || "ads").replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "") || "ads";
+async function saveFile(name, data, btn) {
+  const lbl = btn.textContent;
+  if (!S.downloads) { btn.textContent = "Downloads unavailable here"; setTimeout(() => btn.textContent = lbl, 2500); return; }
+  try { await S.downloads.save({ filename: name, data }); btn.textContent = "Saved"; }
+  catch (e) { btn.textContent = e.code === "declined" ? "Cancelled" : "Couldn't save"; }
+  setTimeout(() => btn.textContent = lbl, 2000);
+}
+function exportCSV(btn) { saveFile(fileBase(S.result) + "-Google-Ads-Editor.csv", buildCSV(S.result), btn); }
+
+function exportPDF(btn) {
+  const r = S.result, J = window.jspdf;
+  if (!J || !J.jsPDF) { btn.textContent = "PDF library didn't load"; return; }
+  const doc = new J.jsPDF({ unit: "pt", format: "letter" });
+  if (!doc.autoTable) { btn.textContent = "PDF tables didn't load"; return; }
+  const W = doc.internal.pageSize.getWidth(), PH = doc.internal.pageSize.getHeight(), M = 40, CW = W - 2 * M;
+  const C = { cover: [34, 42, 38], coverInk: [238, 241, 238], coverMuted: [170, 180, 174], eye: [154, 91, 28], eyeDark: [224, 161, 94], ink: [30, 36, 32], muted: [95, 104, 99], line: [216, 219, 213], label: [242, 243, 240], box: [245, 245, 243], green: [46, 94, 78], note: [245, 236, 221], bad: [194, 65, 12] };
+  const a = r.analysis, b = a.business || {}, k = counts(r), month = totalMonth(r), market = r.overview?.market || b.market || "";
+  const bizU = (b.name || "Business").toUpperCase();
+  let y = 50;
+  const page = () => { doc.addPage(); y = 50; };
+  const need = h => { if (y + h > PH - 50) page(); };
+  const font = (f, s, color) => { doc.setFont(f[0], f[1]); doc.setFontSize(s); doc.setTextColor(...color); };
+  const eyebrow = (t, color = C.eye) => { need(30); font(["courier", "bold"], 8, color); doc.text(t.toUpperCase(), M, y, { charSpace: 1 }); y += 16; };
+  const h1 = (t, mono) => { font(mono ? ["courier", "bold"] : ["helvetica", "bold"], mono ? 15 : 17, C.ink); doc.splitTextToSize(t, CW).forEach(l => { need(22); doc.text(l, M, y); y += 21; }); y += 2; };
+  const h2 = t => { need(26); font(["helvetica", "bold"], 11, C.ink); doc.text(t, M, y); y += 8; };
+  const para = (t, size = 8.5, color = C.muted, f = ["helvetica", "normal"]) => { font(f, size, color); doc.splitTextToSize(String(t), CW).forEach(l => { need(size + 4); doc.text(l, M, y); y += size + 3.5; }); y += 3; };
+  const base = { theme: "grid", margin: { left: M, right: M, top: 50, bottom: 50 }, styles: { font: "helvetica", fontSize: 8.2, cellPadding: 5, textColor: C.ink, lineColor: C.line, lineWidth: 0.6, overflow: "linebreak" }, headStyles: { fillColor: C.label, textColor: C.muted, font: "courier", fontStyle: "bold", fontSize: 7 } };
+  const T = (opts) => { doc.autoTable({ ...base, startY: y, ...opts, styles: { ...base.styles, ...(opts.styles || {}) }, headStyles: { ...base.headStyles, ...(opts.headStyles || {}) } }); y = doc.lastAutoTable.finalY + 12; return doc.lastAutoTable.finalY; };
+  const kv = rows => T({ body: rows.filter(r => r[1]), columnStyles: { 0: { cellWidth: 125, fillColor: C.label, fontStyle: "bold" } } });
+  const cols3 = (items, n = 3) => { const per = Math.ceil(items.length / n) || 1; const out = []; for (let i = 0; i < per; i++) out.push(Array.from({ length: n }, (_, j) => items[j * per + i] || "")); return out; };
+  const keyBox = (title, items, x, w, n, sy) => {
+    font(["courier", "bold"], 7, C.muted); doc.text(title.toUpperCase(), x, sy, { charSpace: .6 });
+    doc.autoTable({ startY: sy + 6, margin: { left: x, right: W - x - w, top: 50, bottom: 50 }, tableWidth: w, theme: "plain", body: cols3(items.length ? items : ["None"], n),
+      styles: { font: "courier", fontSize: 7.6, textColor: C.ink, cellPadding: { top: 1.6, bottom: 1.6, left: 8, right: 2 }, fillColor: C.box, overflow: "linebreak" },
+      tableLineColor: C.line, tableLineWidth: 0.6 });
+    return doc.lastAutoTable.finalY;
+  };
+  const boxGrid = (boxes, n = 3) => {
+    const gap = 16, w = (CW - gap) / 2;
+    for (let i = 0; i < boxes.length; i += 2) {
+      const est = 22 + Math.ceil(Math.max(...boxes.slice(i, i + 2).map(bx => bx.items.length || 1)) / n) * 12;
+      need(Math.min(est, 300));
+      const sy = y, startPage = doc.internal.getCurrentPageInfo().pageNumber;
+      const f1 = keyBox(boxes[i].title, boxes[i].items, M, w, n, sy);
+      const p1 = doc.internal.getCurrentPageInfo().pageNumber;
+      let f2 = f1;
+      if (boxes[i + 1]) { doc.setPage(startPage); f2 = keyBox(boxes[i + 1].title, boxes[i + 1].items, M + w + gap, w, n, sy); }
+      const p2 = doc.internal.getCurrentPageInfo().pageNumber;
+      doc.setPage(Math.max(p1, p2));
+      y = (p1 === p2 ? Math.max(f1, f2) : (p1 > p2 ? f1 : f2)) + 16;
+    }
+  };
+  const footer = () => { const n = doc.internal.getNumberOfPages(); for (let p = 2; p <= n; p++) { doc.setPage(p); font(["courier", "normal"], 6.5, C.muted); doc.text(`${bizU} · GOOGLE ADS BUILD SHEET`, M, PH - 26); doc.text(String(p), W - M, PH - 26, { align: "right" }); } };
+
+  // Cover
+  doc.setFillColor(...C.cover); doc.rect(0, 0, W, PH, "F");
+  let cy = 90;
+  font(["courier", "bold"], 7.5, C.eyeDark); doc.text("GOOGLE ADS BUILD SHEET · COPY & PASTE", 64, cy, { charSpace: 1 }); cy += 42;
+  font(["helvetica", "bold"], 33, C.coverInk);
+  [...doc.splitTextToSize(b.name || "Your Business", W - 128), ...doc.splitTextToSize(`${market ? market + " " : ""}Search Campaigns`, W - 128)].forEach(l => { doc.text(l, 64, cy); cy += 37; });
+  cy += 12; font(["helvetica", "normal"], 11, C.coverMuted);
+  doc.splitTextToSize(`Campaign settings, ad groups, keywords, negative keywords, ${k.groups ? Math.round(k.ads / k.groups) || 2 : 2} responsive search ads per ad group, sitelinks, callouts and structured snippets.`, 400).forEach(l => { doc.text(l, 64, cy); cy += 16; });
+  cy += 30; doc.setDrawColor(90, 100, 94); doc.setLineWidth(0.6); doc.line(64, cy, W - 64, cy); cy += 16;
+  const stats = [["AD SPEND", month ? `${money(month)} / month` : "Not set", 64], ["CAMPAIGNS", String(k.camps), 285], ["AD GROUPS", String(k.groups), 385], ["ADS", String(k.ads), 485]];
+  stats.forEach(([l, v, x]) => { font(["courier", "bold"], 6.5, C.coverMuted); doc.text(l, x, cy, { charSpace: .6 }); font(["helvetica", "bold"], 15, C.coverInk); doc.text(v, x, cy + 20); });
+  cy += 34; doc.line(64, cy, W - 64, cy);
+  font(["helvetica", "bold"], 8, C.coverInk); doc.text("Keyword format:", 64, PH - 88);
+  font(["courier", "normal"], 8, C.coverInk); doc.text('"phrase match" · [exact match]', 136, PH - 88);
+  font(["helvetica", "normal"], 8, C.coverInk); doc.text(". Negatives without symbols are broad match.", 280, PH - 88);
+  doc.text("Every headline, description and asset has been checked against Google's character limits.", 64, PH - 76);
+
+  // 01 settings
+  page(); eyebrow("01 · Account settings"); h1("Set once for the whole account");
+  if (r.settings.length) kv(r.settings.map(s => [s.setting, s.value]));
+  h2("Campaign overview"); y += 4;
+  T({ head: [["CAMPAIGN NAME", "BUDGET", "AD GROUPS", "LANDING PAGE"]], body: [...r.campaigns.map(c => [c.name, budgetText(c), String(c.ad_groups.length), c.landing_page]), ["Total", `${money(r.campaigns.reduce((n, c) => n + c.budget_month, 0))} / month`, String(k.groups), ""]],
+    columnStyles: { 0: { fontStyle: "bold", cellWidth: 140 }, 1: { cellWidth: 110 }, 2: { cellWidth: 50 } }, didParseCell: d => { if (d.section === "body" && d.row.index === r.campaigns.length) d.cell.styles.fontStyle = "bold"; } });
+  if (r.confirm_before_launch.length) {
+    T({ theme: "plain", body: [[`Confirm with the client before launch: ${r.confirm_before_launch.join(" · ")}. If any one is not true, delete every headline, description or asset that uses it.`]], styles: { fillColor: C.note, fontSize: 8.4, cellPadding: 10, lineWidth: 0 } });
+  }
+
+  // 02 shared negatives
+  if (r.shared_negatives.length) {
+    page(); eyebrow("02 · Shared negative keyword lists"); h1(`Create these ${r.shared_negatives.length} lists and apply them to all ${k.camps} campaigns`);
+    para(r.shared_note || "Tools › Shared library › Negative keyword lists. Name each list as shown, paste the keywords, and apply it to every campaign.");
+    boxGrid(r.shared_negatives.map(l => ({ title: l.name, items: l.keywords.map(kwSyntax) })));
+  }
+  // 03 campaign negatives
+  if (r.campaigns.some(c => c.negatives.length)) {
+    page(); eyebrow("03 · Campaign-level negative keywords"); h1("Add these inside each campaign");
+    para(r.campaign_neg_note || "These keep every search in one campaign only.");
+    boxGrid(r.campaigns.filter(c => c.negatives.length).map(c => ({ title: c.name, items: c.negatives.map(kwSyntax) })));
+  }
+
+  // campaigns
+  r.campaigns.forEach(c => {
+    page(); eyebrow("Campaign"); h1(c.name, true);
+    kv([["Budget", budgetText(c)], ["Bidding", c.bidding], ["Ad schedule", c.ad_schedule], ["Location", c.location], ["Landing page", c.landing_page], ["Ad groups", c.ad_groups.map(g => g.name).join(", ")], ["Negatives", c.negatives_line || `All ${r.shared_negatives.length} shared lists + campaign list (section 03)`]]);
+    if (c.sitelinks.length) {
+      h2("Sitelinks (campaign level)"); y += 4;
+      T({ head: [["SITELINK TEXT (MAX 25)", "CH", "DESCRIPTION 1 (MAX 35)", "DESCRIPTION 2 (MAX 35)", "FINAL URL"]], body: c.sitelinks.map(s => [s.text, String(clen(s.text)), s.d1, s.d2, s.url]),
+        columnStyles: { 1: { cellWidth: 24, textColor: C.muted, font: "courier" }, 4: { font: "courier", fontSize: 7, cellWidth: 120 } } });
+      if (c.sitelink_note) para(c.sitelink_note, 7.8);
+    }
+    if (c.callouts.length) { h2("Callouts (max 25)"); y += 6; para(c.callouts.join(", "), 8.6, C.ink); }
+    if (c.snippets.length) { h2("Structured snippets"); y += 4; T({ head: [["HEADER", "VALUES (MAX 25 EACH)"]], body: c.snippets.map(s => [s.header, s.values.join(", ")]), columnStyles: { 0: { fontStyle: "bold", cellWidth: 120 } } }); }
+    if (c.call_asset) { h2("Call asset"); y += 6; para(c.call_asset, 8.6, C.ink); }
+    if (c.location_asset) para(c.location_asset, 7.8);
+
+    c.ad_groups.forEach(g => {
+      page();
+      font(["courier", "bold"], 7.5, C.eye); doc.text((c.name + " ›").toUpperCase(), M, y, { charSpace: .8 }); y += 16;
+      h1("Ad group: " + g.name);
+      T({ body: [["Final URL", g.final_url || "-", "Display path", "/" + g.display_path.filter(Boolean).join("/")]], columnStyles: { 0: { fillColor: C.label, fontStyle: "bold", cellWidth: 95 }, 2: { fillColor: C.label, fontStyle: "bold", cellWidth: 60 }, 3: { font: "courier", cellWidth: 120 } } });
+      const kws = g.keywords.map(kwSyntax);
+      font(["courier", "bold"], 7, C.muted); doc.text(`KEYWORDS (${kws.length})`, M, y, { charSpace: .6 });
+      doc.autoTable({ startY: y + 6, margin: { left: M, right: M, top: 50, bottom: 50 }, theme: "plain", body: cols3(kws, 2), styles: { font: "courier", fontSize: 7.8, cellPadding: { top: 1.6, bottom: 1.6, left: 10, right: 4 }, fillColor: C.box, textColor: C.ink }, tableLineColor: C.line, tableLineWidth: 0.6 });
+      y = doc.lastAutoTable.finalY + 14;
+      if (g.negatives.length) {
+        font(["courier", "bold"], 7, C.muted); doc.text("AD GROUP NEGATIVE KEYWORDS", M, y, { charSpace: .6 }); y += 11;
+        para(g.negatives.map(kwSyntax).join("   ") + (g.negatives_note ? "     " + g.negatives_note : ""), 8, C.ink, ["courier", "normal"]);
+      }
+      const gap = 14, w = (CW - gap) / 2;
+      for (let i = 0; i < g.ads.length; i += 2) {
+        const pair = g.ads.slice(i, i + 2);
+        need(330);
+        const sy = y, sp = doc.internal.getCurrentPageInfo().pageNumber;
+        let ends = [];
+        pair.forEach((ad, j) => {
+          doc.setPage(sp);
+          const x = M + j * (w + gap), letter = String.fromCharCode(65 + i + j);
+          doc.autoTable({ ...base, startY: sy, margin: { left: x, right: W - x - w, top: 50, bottom: 50 }, tableWidth: w,
+            head: [[{ content: `AD ${letter} · ${ad.label.toUpperCase()}`, colSpan: 4, styles: { fillColor: C.green, textColor: [255, 255, 255], font: "courier", fontStyle: "bold", fontSize: 7.6, cellPadding: 6 } }], ["#", "HEADLINE (MAX 30)", "CH", "PIN"]],
+            body: ad.headlines.map((h, n) => [String(n + 1), h.text, String(clen(h.text)), h.pin || ""]),
+            styles: { ...base.styles, fontSize: 7.8, cellPadding: 4 }, columnStyles: { 0: { cellWidth: 18, halign: "right", textColor: C.muted, font: "courier" }, 2: { cellWidth: 22, textColor: C.muted, font: "courier" }, 3: { cellWidth: 26, textColor: C.eye, fontStyle: "bold", font: "courier" } },
+            didParseCell: d => { if (d.section === "body" && d.column.index === 2 && +d.cell.raw > 30) d.cell.styles.textColor = C.bad; } });
+          const hy = doc.lastAutoTable.finalY;
+          doc.autoTable({ ...base, startY: hy + 4, margin: { left: x, right: W - x - w, top: 50, bottom: 50 }, tableWidth: w,
+            head: [["#", "DESCRIPTION (MAX 90)", "CH"]], body: ad.descriptions.map((d, n) => [String(n + 1), d.text, String(clen(d.text))]),
+            styles: { ...base.styles, fontSize: 7.8, cellPadding: 4 }, columnStyles: { 0: { cellWidth: 18, halign: "right", textColor: C.muted, font: "courier" }, 2: { cellWidth: 22, textColor: C.muted, font: "courier" } },
+            didParseCell: d => { if (d.section === "body" && d.column.index === 2 && +d.cell.raw > 90) d.cell.styles.textColor = C.bad; } });
+          ends.push({ p: doc.internal.getCurrentPageInfo().pageNumber, y: doc.lastAutoTable.finalY });
+        });
+        const lastP = Math.max(...ends.map(e => e.p)); doc.setPage(lastP);
+        y = Math.max(...ends.filter(e => e.p === lastP).map(e => e.y)) + 14;
+      }
+      if (g.pin_note) para(g.pin_note, 7.8);
+    });
+  });
+
+  // notes
+  page(); eyebrow("Notes & checks"); h1("Claim ledger, testing and clean-up");
+  T({ head: [["USING (SUPPORTED)", "AVOIDING", "DATA GAPS"]], body: [[arr(a.claims?.supported).join("\n"), arr(a.claims?.avoid).join("\n"), arr(a.claims?.gaps).join("\n")]] });
+  if (b.voice) para("Voice: " + b.voice);
+  T({ head: [["TESTING NOTES", "POLICY NOTES"]], body: [[arr(a.testing_notes).join("\n"), arr(a.policy_notes).join("\n")]] });
+  if (r.cleanup.length) { h2("Keyword clean-up applied"); y += 4; T({ head: [["RULE", "WHAT WE DID", "EXAMPLES"]], body: r.cleanup.map(x => [str(x.rule), str(x.what), str(x.examples)]), columnStyles: { 0: { fontStyle: "bold", cellWidth: 80 } } }); }
+  if (arr(a.removed_keywords).length) { h2("Removed keywords"); y += 6; para(a.removed_keywords.map(x => `${x.keyword} · ${x.reason}`).join("\n"), 8, C.ink); }
+  para("No ads were created or changed — this is copy for your review before publishing.", 8, C.muted);
+  footer();
+  saveFile(fileBase(r) + "-Google-Ads-Build-Sheet.pdf", doc.output("blob"), btn);
+}
+
+/* ---------- Old PDF upload ---------- */
+async function readOldFile(file) {
+  const ta = $("#oldText"); if (!file) return;
+  if (!/pdf$/i.test(file.name)) { ta.value = await file.text(); return; }
+  ta.value = "Reading PDF…";
+  try {
+    const L = window.pdfjsLib; if (!L) throw 0;
+    L.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+    const pdf = await L.getDocument({ data: await file.arrayBuffer() }).promise;
+    let txt = "";
+    for (let p = 1; p <= pdf.numPages; p++) { const c = await (await pdf.getPage(p)).getTextContent(); txt += c.items.map(i => i.str + (i.hasEOL ? "\n" : " ")).join("") + "\n\n"; }
+    ta.value = txt.trim() || "No text found in this PDF. Paste the old sheet here instead.";
+  } catch { ta.value = ""; ta.placeholder = "Couldn't read that PDF here. Paste the old sheet text instead."; }
+}
+
+/* ---------- Projects ---------- */
+function markDirty() { $("#saveBtn").disabled = S.isExample; }
+function projCol() { return S.db && S.uid ? S.db.collection("data/users/" + S.uid) : null; }
+async function saveProject() {
+  if (S.isExample || !S.result) return;
+  const inp = readInputs();
+  if (!S.projectId) S.projectId = "p" + Date.now().toString(36);
+  const body = { name: bizName(S.result) || inp.mainUrl || "Untitled", updatedAt: new Date().toISOString(), inputs: { ...inp, notes: "", oldText: "", site: (inp.site || "").slice(0, 40000) }, result: S.result, history: S.history.slice(-30) };
+  const btn = $("#saveBtn");
+  try {
+    const col = projCol();
+    if (col) await col.doc(S.projectId).set(JSON.parse(JSON.stringify(body)));
+    else { memProjects.set(S.projectId, body); refreshProjSelect(); }
+    btn.disabled = true; btn.textContent = "Saved"; setTimeout(() => btn.textContent = "Save edits", 1500);
+  } catch (e) { btn.disabled = false; btn.textContent = e.code === "quota_exceeded" ? "Storage full" : "Save failed · retry"; }
+}
+function projItems() { return S.db && S.uid ? S.projects : [...memProjects.entries()].map(([id, d]) => ({ id, ...d })); }
+function refreshProjSelect() {
+  const sel = $("#projSel"), items = projItems().slice().sort((a, b) => str(b.updatedAt).localeCompare(str(a.updatedAt)));
+  sel.replaceChildren(el("option", { value: "", text: items.length ? "Saved projects…" : "No saved projects yet" }), ...items.map(p => el("option", { value: p.id, text: `${p.name} · ${new Date(p.updatedAt).toLocaleDateString()}` })));
+  sel.value = S.projectId && items.some(p => p.id === S.projectId) ? S.projectId : "";
+}
+function loadProject(id) {
+  const p = projItems().find(x => x.id === id); if (!p) return;
+  const inp = p.inputs || {};
+  S.projectId = id; S.result = normalizeResult(JSON.parse(JSON.stringify(p.result)), inp); S.isExample = false; S.history = arr(p.history).slice();
+  writeInputs(inp); render(S.result, false); formMsg(""); $("#steps").hidden = true;
+  $("#modeUpd").checked = true; modeChanged();
+}
+function newProject() {
+  S.projectId = null; S.result = EXAMPLE; S.isExample = true; S.history = [];
+  writeInputs({}); $("#oldText").value = ""; $("#modeNew").checked = true; modeChanged(); render(EXAMPLE, true); refreshProjSelect(); $("#steps").hidden = true; formMsg("");
+}
+function modeChanged() {
+  const upd = $("#modeUpd").checked; $("#updBox").hidden = !upd;
+  $("#modeNote").textContent = upd ? "Keeps the previous build and changes only what your new instructions ask. A change list shows on top." : "Builds the full account sheet: settings, negative lists, campaigns, ad groups, keywords, RSAs and assets.";
+  $("#go").textContent = upd ? "Apply update" : "Build account";
+}
+
+/* ---------- Init ---------- */
+async function init() {
+  S.result = EXAMPLE; render(EXAMPLE, true); refreshProjSelect();
+  $("#f").addEventListener("submit", generate);
+  $("#stop").addEventListener("click", () => S.ctl?.abort());
+  document.querySelectorAll("input[name=mode]").forEach(r => r.addEventListener("change", modeChanged));
+  $("#oldPdf").addEventListener("change", e => readOldFile(e.target.files[0]));
+  $("#projSel").addEventListener("change", e => e.target.value && loadProject(e.target.value));
+  $("#newProj").addEventListener("click", newProject);
+  $("#saveBtn").addEventListener("click", saveProject);
+  if (!window.claude) { formMsg("This copy of the page isn't connected to Claude. Open RSA Studio from its card in your Claude chat, or from claude.ai → Artifacts, while signed in.", true); return; }
+  S.samplePromise = claude.use("sample").catch(() => null);
+  S.mcpPromise = claude.use("mcp").catch(() => null);
+  S.samplePromise.then(s => { S.sample = s; if (!s) formMsg("Claude couldn't connect in this view. Open the tool from its card in your Claude chat (or claude.ai → Artifacts), then reload.", true); });
+  claude.use("downloads").then(d => S.downloads = d).catch(() => {});
+  const [db, user] = await Promise.all(["db", "user"].map(n => claude.use(n).catch(() => null)));
+  S.db = db;
+  try { S.uid = user ? await user.id() : null; } catch { S.uid = null; }
+  const col = projCol();
+  if (col) col.onSnapshot(snap => { S.projects = snap.docs.filter(d => d.exists).map(d => ({ id: d.id, ...d.data() })); refreshProjSelect(); }, () => { S.db = null; refreshProjSelect(); });
+}
+init();
+</script>
+
+
+</body></html>
